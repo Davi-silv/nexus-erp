@@ -81,7 +81,7 @@ npm run build
 docker build -t nexus-erp . && docker run -p 8080:80 nexus-erp
 ```
 
-**Landing page:** abra `marketing/index.html` no navegador ou `npm run dev:landing` (porta 3000).
+**Landing page:** `npm run open:landing` (porta 3000) · **App:** `npm run open:app` (porta 8080)
 CTAs apontam para o app em `index.html#auth`.
 
 ## Melhorias v2

@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:landing": "npx --yes serve marketing -p 3000",
+    "dev:landing": "npx --yes serve marketing -l tcp://127.0.0.1:3000",
+    "open:app": "bash scripts/open-app.sh",
+    "open:landing": "bash scripts/open-landing.sh",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
