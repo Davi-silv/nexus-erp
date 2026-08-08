@@ -2,14 +2,19 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Nexus ERP — Gestão financeira inteligente para PF e PME</title>
   <meta name="description" content="Controle suas finanças pessoais ou o caixa da sua empresa. Dashboard, bancos, DRE, IA e PWA instalável. Comece grátis.">
   <meta name="theme-color" content="#6366f1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nexus ERP">
   <meta property="og:title" content="Nexus ERP — Finanças PF e PME">
   <meta property="og:description" content="ERP financeiro moderno com perfis Pessoa Física e Empresa. Instale como app e gerencie tudo em um lugar.">
   <meta property="og:type" content="website">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon.svg">
   <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
@@ -27,10 +32,20 @@
         <a href="#planos">Planos</a>
         <a href="#como-funciona">Como funciona</a>
       </div>
+      <button type="button" class="nav__toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile">
+        <span></span><span></span><span></span>
+      </button>
       <div class="nav__cta">
         <a href="#" data-app-link class="btn btn--ghost">Entrar</a>
         <a href="#" data-app-link class="btn btn--primary">Começar grátis</a>
       </div>
+    </div>
+    <div class="nav__mobile hidden" id="nav-mobile">
+      <a href="#recursos">Recursos</a>
+      <a href="#planos">Planos</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#" data-app-link class="btn btn--primary">Começar grátis</a>
+      <a href="#" data-app-link class="btn btn--ghost">Entrar</a>
     </div>
   </nav>
 
@@ -272,6 +287,29 @@
     const appUrl = isLocal ? 'http://127.0.0.1:8080/#auth' : 'https://app.nexuserp.com.br/#auth';
     document.querySelectorAll('[data-app-link]').forEach((link) => {
       link.href = appUrl;
+    });
+
+    const navToggle = document.getElementById('nav-toggle');
+    const navMobile = document.getElementById('nav-mobile');
+
+    function closeMobileNav() {
+      navMobile?.classList.add('hidden');
+      navToggle?.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('nav-open');
+    }
+
+    navToggle?.addEventListener('click', () => {
+      const open = navMobile?.classList.toggle('hidden') === false;
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.body.classList.toggle('nav-open', open);
+    });
+
+    navMobile?.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeMobileNav);
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) closeMobileNav();
     });
 
     document.querySelectorAll('.profile-tab').forEach(btn => {

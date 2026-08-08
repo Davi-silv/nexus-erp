@@ -84,6 +84,16 @@ docker build -t nexus-erp . && docker run -p 8080:80 nexus-erp
 **Landing page:** `npm run open:landing` (porta 3000) · **App:** `npm run open:app` (porta 8080)
 CTAs apontam para o app em `index.html#auth`.
 
+## Compatibilidade com dispositivos
+
+- **Mobile:** menu hambúrguer com drawer lateral, topbar adaptável, tabelas com scroll horizontal
+- **Tablet:** grids em 2 colunas, layout fluido entre 600px e 1100px
+- **Desktop:** sidebar fixa, layout completo
+- **PWA:** instalável em Android/iOS/desktop; suporte a `viewport-fit=cover` (notch)
+- **Landing:** menu mobile dedicado + CTAs acessíveis em telas pequenas
+
+Teste redimensionando o navegador ou use DevTools → Toggle device toolbar (F12).
+
 ## Melhorias v2
 
 - Monolito de 1.569 linhas → ~20 módulos ES
