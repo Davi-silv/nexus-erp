@@ -9,7 +9,7 @@
   <meta property="og:title" content="Nexus ERP — Finanças PF e PME">
   <meta property="og:description" content="ERP financeiro moderno com perfis Pessoa Física e Empresa. Instale como app e gerencie tudo em um lugar.">
   <meta property="og:type" content="website">
-  <link rel="icon" href="../public/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
     <div class="container nav__inner">
       <a href="#" class="nav__brand">
         <div class="nav__logo">
-          <img src="../public/logo-mark.svg" alt="">
+          <img src="assets/logo-mark.svg" alt="Nexus ERP" width="40" height="40">
         </div>
         Nexus ERP
       </a>
@@ -28,8 +28,8 @@
         <a href="#como-funciona">Como funciona</a>
       </div>
       <div class="nav__cta">
-        <a href="../index.html#auth" class="btn btn--ghost">Entrar</a>
-        <a href="../index.html#auth" class="btn btn--primary">Começar grátis</a>
+        <a href="#" data-app-link class="btn btn--ghost">Entrar</a>
+        <a href="#" data-app-link class="btn btn--primary">Começar grátis</a>
       </div>
     </div>
   </nav>
@@ -43,7 +43,7 @@
         Feito para quem quer clareza — seja no bolso ou no caixa da empresa.
       </p>
       <div class="hero__actions">
-        <a href="../index.html#auth" class="btn btn--primary btn--lg">Criar conta grátis</a>
+        <a href="#" data-app-link class="btn btn--primary btn--lg">Criar conta grátis</a>
         <a href="#planos" class="btn btn--ghost btn--lg">Ver planos</a>
       </div>
 
@@ -175,7 +175,7 @@
             <li>Metas e categorias</li>
             <li>5 análises IA/mês</li>
           </ul>
-          <a href="../index.html#auth" class="btn btn--ghost">Começar grátis</a>
+          <a href="#" data-app-link class="btn btn--ghost">Começar grátis</a>
         </article>
 
         <article class="price-card price-card--highlight">
@@ -188,7 +188,7 @@
             <li>IA prioritária</li>
             <li>Relatórios avançados</li>
           </ul>
-          <a href="../index.html#auth" class="btn btn--primary">Em breve</a>
+          <a href="#" data-app-link class="btn btn--primary">Em breve</a>
         </article>
 
         <article class="price-card">
@@ -201,7 +201,7 @@
             <li>Até 3 usuários</li>
             <li>Conciliação bancária</li>
           </ul>
-          <a href="../index.html#auth" class="btn btn--ghost">Em breve</a>
+          <a href="#" data-app-link class="btn btn--ghost">Em breve</a>
         </article>
 
         <article class="price-card">
@@ -214,7 +214,7 @@
             <li>Suporte prioritário</li>
             <li>Conciliação avançada</li>
           </ul>
-          <a href="../index.html#auth" class="btn btn--ghost">Em breve</a>
+          <a href="#" data-app-link class="btn btn--ghost">Em breve</a>
         </article>
       </div>
     </div>
@@ -251,7 +251,7 @@
       <div class="cta__box">
         <h2>Pronto para organizar suas finanças?</h2>
         <p>Junte-se ao Nexus ERP. Grátis para começar, premium quando você crescer.</p>
-        <a href="../index.html#auth" class="btn btn--primary btn--lg">Acessar o Nexus ERP →</a>
+        <a href="#" data-app-link class="btn btn--primary btn--lg">Acessar o Nexus ERP →</a>
       </div>
     </div>
   </section>
@@ -259,15 +259,21 @@
   <footer class="footer">
     <div class="container">
       <div class="footer__links">
-        <a href="../index.html#auth">Acessar app</a>
+        <a href="#" data-app-link>Acessar app</a>
         <a href="https://github.com/Davi-silv/nexus-erp" target="_blank" rel="noopener">GitHub</a>
-        <a href="../docs/SECURITY-LGPD.md">Privacidade</a>
+        <a href="https://github.com/Davi-silv/nexus-erp/blob/main/docs/SECURITY-LGPD.md" target="_blank" rel="noopener">Privacidade</a>
       </div>
       <p>© 2026 Nexus ERP · Gestão financeira inteligente</p>
     </div>
   </footer>
 
   <script>
+    const isLocal = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+    const appUrl = isLocal ? 'http://127.0.0.1:8080/#auth' : 'https://app.nexuserp.com.br/#auth';
+    document.querySelectorAll('[data-app-link]').forEach((link) => {
+      link.href = appUrl;
+    });
+
     document.querySelectorAll('.profile-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.profile-tab').forEach(b => b.classList.remove('active'));
