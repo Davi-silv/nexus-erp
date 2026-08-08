@@ -77,6 +77,11 @@ html, body {
 body {
   background: var(--gradient-mesh), linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-base) 100%);
   background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+body.nav-open {
+  overflow: hidden;
 }
 
 /* subtle grid overlay */
@@ -316,6 +321,40 @@ body::before {
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-primary);
+  min-width: 0;
+}
+
+.btn-menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+
+.btn-menu:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 150;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.active {
+  display: block;
 }
 
 .topbar .user {
@@ -846,6 +885,11 @@ form#add-recurring-form {
   overflow-x: auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap .table {
+  min-width: 520px;
 }
 
 .table {
@@ -1256,6 +1300,10 @@ textarea#statement-paste {
 }
 
 /* ─── Responsive ─── */
+@media (min-width: 600px) and (max-width: 1100px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 1100px) {
   .cards { grid-template-columns: 1fr; }
   .charts { grid-template-columns: 1fr; }
@@ -1265,13 +1313,133 @@ textarea#statement-paste {
 }
 
 @media (max-width: 820px) {
-  .sidebar { display: none; }
+  .btn-menu { display: flex; }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.28s ease;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
   .content { padding: 20px 16px 40px; }
-  .topbar { padding: 0 16px; }
+  .panel { padding: 18px 16px; }
+
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: var(--topbar-h);
+    padding: 10px 16px;
+    gap: 10px 12px;
+  }
+
+  .topbar__left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .topbar h1 {
+    font-size: 1.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar .user {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  #current-user { display: none; }
+
+  .user-pill {
+    padding: 4px;
+    border-radius: 50%;
+  }
+
+  .auth-forms { padding: 28px 20px; }
+
+  .auth-layout {
+    border-radius: var(--radius-lg);
+    margin: 0;
+  }
+
   .panel-header, .panel-header > div { flex-direction: column; align-items: stretch; }
   .ai-config-grid { grid-template-columns: 1fr; }
   .ai-actions { flex-direction: column; }
   .ai-actions button { width: 100%; }
+
+  .banking-prompt {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 18px 16px;
+  }
+
+  .banking-prompt button { width: 100%; }
+
+  .pwa-banner {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0 16px;
+    gap: 12px;
+  }
+
+  .pwa-banner button:not(.pwa-banner__close) { width: 100%; }
+
+  .ai-chat-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ai-chat-form button { width: 100%; }
+
+  form#company-form,
+  form#add-cost-center-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar__eyebrow { display: none; }
+
+  .btn-install {
+    padding: 8px !important;
+    font-size: 0 !important;
+    gap: 0 !important;
+  }
+
+  .btn-install svg { width: 18px; height: 18px; }
+
+  #btn-login,
+  #btn-logout {
+    padding: 10px 14px;
+    min-height: 44px;
+  }
+
+  .auth-forms { padding: 22px 16px; }
+
+  .page-header h2 { font-size: 1.35rem; }
+
+  .table th, .table td {
+    padding: 12px 14px;
+    font-size: 0.8125rem;
+  }
+
+  .profile-type-toggle { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar { transition: none; }
 }
 
 /* ─── PF / PJ Profile ─── */

@@ -20,6 +20,7 @@ import { initCompanyModule } from './ui/modules/company.module.js';
 import { initBankingModule } from './ui/modules/banking.module.js';
 import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
 import { initPwaInstall } from './ui/pwa-install.js';
+import { initMobileNav } from './ui/mobile-nav.js';
 
 import { APP_CONFIG } from './config/app.config.js';
 
@@ -31,6 +32,7 @@ async function bootstrap() {
     /* PWA indisponível — ambiente de teste ou servidor estático */
   }
   initPwaInstall();
+  initMobileNav();
 
   const bus = new EventBus();
   const store = new AppStore(bus);
