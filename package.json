@@ -1,0 +1,25 @@
+{
+  "name": "nexus-erp",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "bash scripts/test-e2e.sh",
+    "test:e2e:ui": "bash scripts/test-e2e.sh --ui",
+    "test:all": "npm test && npm run test:e2e"
+  },
+  "dependencies": {
+    "javascript-obfuscator": "^5.4.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "jsdom": "^30.0.1",
+    "vite": "^6.2.0",
+    "vite-plugin-pwa": "^1.3.0",
+    "vitest": "^3.0.0"
+  }
+}

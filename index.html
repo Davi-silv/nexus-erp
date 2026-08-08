@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nexus ERP</title>
+  <meta name="description" content="Nexus ERP: painel financeiro moderno com relatórios, conciliação e gestão de contas.">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nexus ERP">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand__logo">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M12 4v16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="brand__text">
+          <span class="brand__name">Nexus</span>
+          <span class="brand__tagline">Finance ERP</span>
+        </div>
+      </div>
+      <nav>
+        <div class="nav-group">
+          <div class="nav-group__label">Principal</div>
+          <ul>
+            <li><button type="button" class="nav-item active" data-view="dashboard"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Dashboard</button></li>
+            <li><button type="button" class="nav-item" data-view="saude"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>Saúde Financeira</button></li>
+            <li><button type="button" class="nav-item" data-view="ia-analise"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V11h1a7 7 0 0 1 7 7h-2a5 5 0 0 0-5-5h-1v1.5c1.2.7 2 2 2 3.5a4 4 0 1 1-8 0c0-1.5.8-2.8 2-3.5V11H9a5 5 0 0 0-5 5H2a7 7 0 0 1 7-7h1V9.5C8.8 8.8 8 7.5 8 6a4 4 0 0 1 4-4z"/></svg></span>Análise IA</button></li>
+          </ul>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group__label">Financeiro</div>
+          <ul>
+            <li><button type="button" class="nav-item" data-view="contas"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>Contas</button></li>
+            <li style="display:none"><button type="button" class="nav-item" data-view="bancos"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M6 16h.01"/><path d="M10 16h4"/></svg></span>Bancos & Cartões</button></li>
+            <li><button type="button" class="nav-item" data-view="lancamentos"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Lançamentos</button></li>
+            <li><button type="button" class="nav-item" data-view="cartoes"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></span>Cartões</button></li>
+            <li><button type="button" class="nav-item" data-view="categorias"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>Categorias & Metas</button></li>
+            <li><button type="button" class="nav-item" data-view="recorrentes"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg></span>Recorrentes</button></li>
+            <li><button type="button" class="nav-item" data-view="empresa"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg></span>Minha Empresa</button></li>
+          </ul>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group__label">Operações</div>
+          <ul>
+            <li><button type="button" class="nav-item" data-view="conciliacao"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Conciliação</button></li>
+            <li><button type="button" class="nav-item" data-view="relatorios"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>Relatórios</button></li>
+            <li><button type="button" class="nav-item" data-view="usuarios"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Usuários</button></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="sidebar__footer">
+        <p>Powered by <strong>Nexus ERP v2</strong><br>Gestão financeira inteligente</p>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar__left">
+          <span class="topbar__eyebrow">Nexus ERP · <span id="profile-badge">Pessoa Física</span></span>
+          <h1 id="page-title">Dashboard</h1>
+        </div>
+        <div class="user">
+          <button type="button" id="btn-install-app" class="btn-install hidden" title="Instalar aplicativo">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Instalar app
+          </button>
+          <div class="user-pill">
+            <div class="user-avatar" id="user-avatar">?</div>
+            <span id="current-user">Convidado</span>
+          </div>
+          <button type="button" id="btn-login">Entrar</button>
+          <button type="button" id="btn-logout" class="hidden">Sair</button>
+        </div>
+      </header>
+
+      <div id="pwa-install-banner" class="pwa-banner hidden">
+        <div class="pwa-banner__icon">📲</div>
+        <div class="pwa-banner__text">
+          <strong>Instale o Nexus ERP no seu dispositivo</strong>
+          <span>Acesse offline e use como um app nativo — rápido e prático.</span>
+        </div>
+        <button type="button" id="pwa-install-banner-btn">Instalar</button>
+        <button type="button" id="pwa-install-dismiss" class="pwa-banner__close" aria-label="Fechar">×</button>
+      </div>
+
+      <main class="content">
+        <section id="auth" class="view">
+          <div class="auth-layout">
+            <div class="auth-hero">
+              <div class="auth-hero__logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M12 4v16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+              </div>
+              <h2 id="auth-hero-title">Finanças pessoais e empresariais</h2>
+              <p id="auth-hero-desc">Para pessoa física ou PME: fluxo de caixa, metas, centros de custo, DRE e análise com IA.</p>
+              <ul class="auth-features">
+                <li>Pessoa Física — controle de gastos e metas</li>
+                <li>Empresa PME — centros de custo e DRE</li>
+                <li>Consultor IA integrado</li>
+                <li>Conciliação e exportação CSV</li>
+              </ul>
+            </div>
+            <div class="auth-forms">
+              <div>
+                <h3 class="auth-tab-title">Entrar na sua conta</h3>
+                <form id="login-form">
+                  <input type="email" name="email" placeholder="Email" required>
+                  <input type="password" name="password" placeholder="Senha" required>
+                  <button type="submit">Entrar</button>
+                </form>
+              </div>
+              <hr class="auth-divider">
+              <div>
+                <h3 class="auth-tab-title">Criar nova conta</h3>
+                <div class="profile-type-toggle">
+                  <button type="button" id="profile-pf" class="profile-type-btn active">👤 Pessoa Física</button>
+                  <button type="button" id="profile-pj" class="profile-type-btn">🏢 Empresa (PME)</button>
+                </div>
+                <form id="register-form">
+                  <input type="hidden" name="profileType" id="register-profile-type" value="pf">
+                  <input type="text" name="name" placeholder="Nome completo" required>
+                  <div id="register-pj-fields" class="hidden">
+                    <input type="text" name="legalName" placeholder="Razão social">
+                    <input type="text" name="tradeName" placeholder="Nome fantasia">
+                    <input type="text" name="cnpj" placeholder="CNPJ (00.000.000/0001-00)" maxlength="18">
+                    <select name="taxRegime">
+                      <option value="simples">Simples Nacional</option>
+                      <option value="presumido">Lucro Presumido</option>
+                      <option value="real">Lucro Real</option>
+                      <option value="mei">MEI</option>
+                    </select>
+                  </div>
+                  <input type="email" name="email" placeholder="Email" required>
+                  <input type="password" name="password" placeholder="Senha" required>
+                  <button type="submit" class="btn-secondary">Registrar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="dashboard" class="view active">
+          <div class="panel overview-panel">
+            <div class="panel-header">
+              <div>
+                <h2 id="dashboard-title">Visão geral financeira</h2>
+                <p id="dashboard-desc">Monitore fluxos de caixa, desempenho de receita e despesas em um painel centralizado.</p>
+              </div>
+              <span class="status-chip">Painel de controle</span>
+            </div>
+          </div>
+
+          <div id="pj-banking-prompt" class="banking-prompt hidden">
+            <div class="banking-prompt__icon">🏦</div>
+            <div class="banking-prompt__text">
+              <strong>Configure seus bancos e cartões</strong>
+              <p>Cadastre as contas bancárias e cartões corporativos da empresa para centralizar o controle financeiro.</p>
+            </div>
+            <button type="button" id="pj-banking-goto-dash">Cadastrar agora</button>
+          </div>
+
+          <div class="cards">
+            <div class="metric-card metric-card--balance">
+              <div class="metric-card__icon">💰</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label" id="label-balance">Saldo disponível</span>
+                <strong class="metric-card__value" id="saldo">R$ 0,00</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--income">
+              <div class="metric-card__icon">📈</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label" id="label-income">Receitas mensais</span>
+                <strong class="metric-card__value" id="dashboard-receitas">R$ 0,00</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--expense">
+              <div class="metric-card__icon">📉</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label" id="label-expense">Despesas mensais</span>
+                <strong class="metric-card__value" id="dashboard-despesas">R$ 0,00</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Movimentações recentes</h2>
+              <button type="button" id="open-add">+ Registrar movimento</button>
+            </div>
+
+            <form id="add-tx-form" class="hidden">
+              <input type="date" name="date" required>
+              <input type="text" name="desc" placeholder="Descrição" required>
+              <select name="account" id="tx-account-select"></select>
+              <select name="type">
+                <option value="credit">Crédito</option>
+                <option value="debit">Débito</option>
+              </select>
+              <input type="number" name="amount" step="0.01" placeholder="Valor" required>
+              <input type="text" name="counterparty" class="pj-field hidden" placeholder="Cliente / Fornecedor">
+              <input type="text" name="docNumber" class="pj-field hidden" placeholder="Nº NF / Documento">
+              <select name="costCenter" id="tx-cost-center-select" class="pj-field hidden"></select>
+              <button type="submit">Adicionar</button>
+              <button type="button" id="cancel-add">Cancelar</button>
+            </form>
+
+            <div class="table-wrap">
+            <table class="table" id="tx-table">
+              <thead>
+                <tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr>
+              </thead>
+              <tbody id="tx-body">
+              </tbody>
+            </table>
+            </div>
+          </div>
+
+          <div class="panel hidden" id="dre-panel">
+            <div class="panel-header">
+              <h3>DRE Simplificado</h3>
+              <button type="button" id="export-dre" class="btn-secondary">Exportar DRE (CSV)</button>
+            </div>
+            <div id="dre-summary"></div>
+          </div>
+
+          <div class="panel charts">
+            <div class="chart-col">
+              <h3>Fluxo de ganhos x perdas</h3>
+              <p class="chart-description">Acompanhe a evolução mensal do caixa para identificar tendências e oportunidades.</p>
+              <canvas id="chart-monthly" height="140"></canvas>
+            </div>
+            <div class="chart-col">
+              <h3>Resumo financeiro</h3>
+              <p class="chart-description">Compare ganhos e gastos em uma visão rápida e clara.</p>
+              <canvas id="chart-summary" height="140"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section id="contas" class="view">
+          <div class="page-header">
+            <h2>Contas Bancárias</h2>
+            <p>Gerencie suas contas e acompanhe saldos atualizados automaticamente.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3>Contas bancárias</h3><button type="button" id="open-add-account">+ Nova conta</button></div>
+
+            <form id="add-account-form" class="hidden">
+              <input type="text" name="name" placeholder="Nome da conta" required>
+              <input type="text" name="bank" placeholder="Banco" required>
+              <input type="number" name="balance" step="0.01" placeholder="Saldo inicial" required>
+              <button type="submit">Adicionar</button>
+              <button type="button" id="cancel-add-account">Cancelar</button>
+            </form>
+
+            <div class="table-wrap">
+            <table class="table" id="accounts-table">
+              <thead><tr><th>Nome</th><th>Banco</th><th>Saldo</th><th>Ações</th></tr></thead>
+              <tbody id="accounts-body"></tbody>
+            </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="lancamentos" class="view">
+          <div class="page-header">
+            <h2>Lançamentos</h2>
+            <p>Registre, filtre e gerencie todas as movimentações financeiras.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3>Gerenciar lançamentos</h3>
+              <div>
+                <button type="button" id="open-add-lancamento">+ Novo lançamento</button>
+                <label>Filtro data: <input type="date" id="filter-date-from"> até <input type="date" id="filter-date-to"></label>
+                <button type="button" id="apply-filters">Aplicar</button>
+                <button type="button" id="clear-filters">Limpar</button>
+              </div>
+            </div>
+
+            <form id="add-tx-form-lancamentos" class="hidden">
+              <input type="date" name="date" required>
+              <input type="text" name="desc" placeholder="Descrição" required>
+              <select name="account" id="tx-account-select-main"></select>
+              <select name="category" id="tx-category-select">
+                <option value="">Sem categoria</option>
+              </select>
+              <select name="type">
+                <option value="credit">Crédito</option>
+                <option value="debit">Débito</option>
+              </select>
+              <input type="number" name="amount" step="0.01" placeholder="Valor" required>
+              <input type="text" name="counterparty" class="pj-field hidden" placeholder="Cliente / Fornecedor">
+              <input type="text" name="docNumber" class="pj-field hidden" placeholder="Nº NF / Documento">
+              <select name="costCenter" id="tx-cost-center-select-main" class="pj-field hidden"></select>
+              <button type="submit">Adicionar</button>
+              <button type="button" id="cancel-add-lancamento">Cancelar</button>
+            </form>
+
+            <div class="table-wrap">
+            <table class="table" id="tx-table-main">
+              <thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th><th>Conta</th><th class="pj-field hidden">Cliente/Fornec.</th><th class="pj-field hidden">Centro custo</th><th>Ações</th></tr></thead>
+              <tbody id="tx-body-main"></tbody>
+            </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="cartoes" class="view">
+          <div class="page-header">
+            <h2>Cartões de Crédito</h2>
+            <p>Acompanhe encargos, taxas e custos de cada cartão cadastrado.</p>
+          </div>
+          <div class="panel overview-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Gerenciar encargos e custos</h3>
+                <p>Acompanhe taxas anuais, juros, anuidades e outros encargos associados aos seus cartões de crédito.</p>
+              </div>
+              <span class="status-chip">Análise de custos</span>
+            </div>
+          </div>
+
+          <div class="cards">
+            <div class="metric-card metric-card--expense">
+              <div class="metric-card__icon">💳</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label">Encargos este mês</span>
+                <strong class="metric-card__value" id="card-charges-month">R$ 0,00</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--ratio">
+              <div class="metric-card__icon">📊</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label">Total acumulado</span>
+                <strong class="metric-card__value" id="card-charges-total">R$ 0,00</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--cards">
+              <div class="metric-card__icon">🏦</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label">Cartões cadastrados</span>
+                <strong class="metric-card__value" id="card-count">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Meus cartões de crédito</h3>
+              <button type="button" id="open-add-card">+ Novo cartão</button>
+            </div>
+
+            <form id="add-card-form" class="hidden">
+              <input type="text" name="name" placeholder="Nome do cartão (ex: Nubank)" required>
+              <input type="text" name="last4" placeholder="Últimos 4 dígitos" maxlength="4" required>
+              <input type="text" name="holder" placeholder="Titular" required>
+              <input type="date" name="anniversary" placeholder="Data de aniversário" required>
+              <button type="submit">Adicionar cartão</button>
+              <button type="button" id="cancel-add-card">Cancelar</button>
+            </form>
+
+            <table class="table" id="cards-table">
+              <thead>
+                <tr><th>Cartão</th><th>Titular</th><th>Aniversário</th><th>Encargos mensais</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="cards-body"></tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Registrar encargos</h3>
+              <button type="button" id="open-add-charge">+ Novo encargo</button>
+            </div>
+
+            <form id="add-charge-form" class="hidden">
+              <select name="cardId" id="charge-card-select"></select>
+              <input type="date" name="date" required>
+              <select name="type">
+                <option value="annual_fee">Taxa Anual</option>
+                <option value="interest">Juros/Encargos</option>
+                <option value="annuity">Anuidade</option>
+                <option value="insurance">Seguro</option>
+                <option value="other">Outro</option>
+              </select>
+              <input type="text" name="desc" placeholder="Descrição do encargo" required>
+              <input type="number" name="amount" step="0.01" placeholder="Valor" required>
+              <button type="submit">Registrar encargo</button>
+              <button type="button" id="cancel-add-charge">Cancelar</button>
+            </form>
+
+            <table class="table" id="charges-table">
+              <thead>
+                <tr><th>Data</th><th>Cartão</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="charges-body"></tbody>
+            </table>
+          </div>
+
+          <div class="panel charts cards-charts">
+            <div class="chart-col">
+              <h3>Encargos por tipo</h3>
+              <p class="chart-description">Visualize a distribuição dos custos entre tipos de encargo para identificar onde economizar.</p>
+              <canvas id="chart-charges-type" height="140"></canvas>
+            </div>
+            <div class="chart-col">
+              <h3>Tendência mensal</h3>
+              <p class="chart-description">Acompanhe como os encargos evoluem mês a mês para melhor planejamento.</p>
+              <canvas id="chart-charges-trend" height="140"></canvas>
+            </div>
+            <div class="chart-col">
+              <h3>Encargos por cartão</h3>
+              <p class="chart-description">Compare o custo de cada cartão para avaliar qual está mais caro.</p>
+              <canvas id="chart-charges-card" height="140"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section id="categorias" class="view">
+          <div class="page-header">
+            <h2>Categorias & Metas</h2>
+            <p>Organize gastos por categoria e defina metas orçamentárias mensais.</p>
+          </div>
+          <div class="panel overview-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Organize seus gastos com metas</h3>
+                <p>Defina categorias, estabeleça metas mensais e acompanhe seu progresso em tempo real.</p>
+              </div>
+              <span class="status-chip">Planejamento</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Categorias</h3>
+              <button type="button" id="open-add-category">+ Nova categoria</button>
+            </div>
+            <form id="add-category-form" class="hidden">
+              <input type="text" name="name" placeholder="Nome da categoria (ex: Alimentação)" required>
+              <input type="color" name="color" value="#00e5ff" required>
+              <button type="submit">Adicionar</button>
+              <button type="button" id="cancel-add-category">Cancelar</button>
+            </form>
+            <table class="table" id="categories-table">
+              <thead><tr><th>Categoria</th><th>Gasto este mês</th><th>Meta</th><th>Ações</th></tr></thead>
+              <tbody id="categories-body"></tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Metas Mensais</h3>
+              <button type="button" id="open-add-goal">+ Nova meta</button>
+            </div>
+            <form id="add-goal-form" class="hidden">
+              <select name="categoryId" id="goal-category-select"></select>
+              <input type="number" name="limit" step="0.01" placeholder="Limite mensal" required>
+              <button type="submit">Definir meta</button>
+              <button type="button" id="cancel-add-goal">Cancelar</button>
+            </form>
+            <div id="goals-container"></div>
+          </div>
+
+          <div class="panel charts">
+            <div class="chart-col">
+              <h3>Gastos por categoria</h3>
+              <canvas id="chart-categories" height="180"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section id="recorrentes" class="view">
+          <div class="page-header">
+            <h2>Transações Recorrentes</h2>
+            <p>Automatize lançamentos que se repetem todo mês, semana ou quinzena.</p>
+          </div>
+          <div class="panel overview-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Automatize seus lançamentos</h3>
+                <p>Configure transações que se repetem (aluguel, salário, internet) e gere automaticamente com um clique.</p>
+              </div>
+              <span class="status-chip">Automação</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Minhas recorrências</h3>
+              <button type="button" id="open-add-recurring">+ Nova recorrência</button>
+            </div>
+            <form id="add-recurring-form" class="hidden">
+              <input type="text" name="desc" placeholder="Descrição" required>
+              <select name="type">
+                <option value="credit">Crédito</option>
+                <option value="debit">Débito</option>
+              </select>
+              <input type="number" name="amount" step="0.01" placeholder="Valor" required>
+              <select name="frequency">
+                <option value="weekly">Semanal</option>
+                <option value="biweekly">Quinzenal</option>
+                <option value="monthly">Mensal</option>
+              </select>
+              <select name="accountId" id="recurring-account-select"></select>
+              <input type="date" name="startDate" placeholder="Primeira ocorrência" required>
+              <button type="submit">Criar</button>
+              <button type="button" id="cancel-add-recurring">Cancelar</button>
+            </form>
+            <table class="table" id="recurring-table">
+              <thead><tr><th>Descrição</th><th>Tipo</th><th>Valor</th><th>Frequência</th><th>Próx. ocorrência</th><th>Ações</th></tr></thead>
+              <tbody id="recurring-body"></tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Gerar lançamentos</h3>
+              <button type="button" id="generate-recurring">Gerar todas as recorrências pendentes</button>
+            </div>
+            <div id="recurring-status" style="margin-top:12px;"></div>
+          </div>
+        </section>
+
+        <section id="saude" class="view">
+          <div class="page-header">
+            <h2>Saúde Financeira</h2>
+            <p>Score de bem-estar financeiro, indicadores e recomendações personalizadas.</p>
+          </div>
+          <div class="panel overview-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Monitore sua saúde financeira</h3>
+                <p>Indicadores chave, score de bem-estar financeiro e recomendações personalizadas.</p>
+              </div>
+              <span class="status-chip">Análise</span>
+            </div>
+          </div>
+
+          <div class="cards">
+            <div class="metric-card metric-card--health">
+              <div class="metric-card__icon">❤️</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label" id="label-health-score">Score de Saúde</span>
+                <strong class="metric-card__value" id="health-score">--</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--savings">
+              <div class="metric-card__icon">🐷</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label" id="label-savings">Taxa de Poupança</span>
+                <strong class="metric-card__value" id="savings-rate">--</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--ratio">
+              <div class="metric-card__icon">⚖️</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label" id="label-expense-ratio">Índice de Despesa</span>
+                <strong class="metric-card__value" id="expense-ratio">--</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Indicadores Financeiros</h3>
+            </div>
+            <div id="health-indicators"></div>
+          </div>
+
+          <div class="panel charts">
+            <div class="chart-col">
+              <h3>Evolução do Score</h3>
+              <canvas id="chart-health-evolution" height="180"></canvas>
+            </div>
+            <div class="chart-col">
+              <h3>Receitas vs Despesas</h3>
+              <canvas id="chart-health-ratio" height="180"></canvas>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Recomendações</h3>
+            </div>
+            <div id="health-recommendations"></div>
+          </div>
+        </section>
+
+        <section id="ia-analise" class="view">
+          <div class="page-header">
+            <h2>Análise com IA</h2>
+            <p>Consultor financeiro inteligente com recomendações personalizadas.</p>
+          </div>
+          <div class="panel overview-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Consultor financeiro inteligente</h3>
+                <p>Obtenha uma análise detalhada das suas finanças com recomendações personalizadas geradas por inteligência artificial.</p>
+              </div>
+              <span class="status-chip ai-chip">Powered by AI</span>
+            </div>
+          </div>
+
+          <div class="panel ai-config-panel">
+            <div class="panel-header">
+              <h3>Configuração da API</h3>
+              <button type="button" id="toggle-ai-config" class="btn-secondary">Mostrar configurações</button>
+            </div>
+            <form id="ai-config-form" class="hidden ai-config-form">
+              <div class="ai-config-grid">
+                <label>
+                  Chave da API
+                  <input type="password" name="apiKey" id="ai-api-key" placeholder="sk-..." autocomplete="off">
+                </label>
+                <label>
+                  Endpoint
+                  <input type="url" name="endpoint" id="ai-endpoint" placeholder="https://api.openai.com/v1/chat/completions">
+                </label>
+                <label>
+                  Modelo
+                  <select name="model" id="ai-model">
+                    <option value="gpt-4o-mini">GPT-4o Mini (rápido)</option>
+                    <option value="gpt-4o">GPT-4o (completo)</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                    <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Groq)</option>
+                    <option value="custom">Personalizado...</option>
+                  </select>
+                </label>
+                <label id="ai-custom-model-wrap" class="hidden">
+                  Modelo personalizado
+                  <input type="text" name="customModel" id="ai-custom-model" placeholder="nome-do-modelo">
+                </label>
+              </div>
+              <p class="ai-config-note">Sua chave fica salva apenas no navegador (localStorage). Compatível com OpenAI, Groq, Together e APIs similares.</p>
+              <div class="ai-config-actions">
+                <button type="submit">Salvar configuração</button>
+                <button type="button" id="clear-ai-config" class="btn-secondary">Limpar chave</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel ai-analysis-panel">
+            <div class="panel-header">
+              <h3>Gerar análise</h3>
+              <div class="ai-actions">
+                <button type="button" id="run-ai-analysis">Analisar com IA</button>
+                <button type="button" id="run-local-analysis" class="btn-secondary">Análise local (sem API)</button>
+              </div>
+            </div>
+            <div id="ai-status" class="ai-status hidden">
+              <div class="ai-spinner"></div>
+              <span>Analisando suas finanças...</span>
+            </div>
+            <div id="ai-result" class="ai-result hidden"></div>
+            <div id="ai-empty" class="ai-empty">
+              <p>Clique em <strong>Analisar com IA</strong> para obter um relatório completo com recomendações personalizadas, ou use a <strong>análise local</strong> sem precisar de chave de API.</p>
+            </div>
+          </div>
+
+          <div class="panel ai-chat-panel">
+            <div class="panel-header">
+              <h3>Pergunte sobre suas finanças</h3>
+            </div>
+            <div id="ai-chat-messages" class="ai-chat-messages"></div>
+            <form id="ai-chat-form" class="ai-chat-form">
+              <input type="text" name="question" id="ai-chat-input" placeholder="Ex: Onde posso economizar este mês?" autocomplete="off">
+              <button type="submit">Enviar</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><h3>Histórico de análises</h3></div>
+            <div id="ai-history" class="ai-history"></div>
+          </div>
+        </section>
+
+        <section id="conciliacao" class="view">
+          <div class="page-header">
+            <h2>Conciliação Bancária</h2>
+            <p>Compare extratos CSV com lançamentos registrados no sistema.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3>Conciliação bancária</h3></div>
+            <p>Cole CSV do extrato (data,valor,descrição) ou carregue arquivo.</p>
+            <input type="file" id="reconcile-file" accept=".csv,text/csv">
+            <textarea id="statement-paste" rows="6" placeholder="data,valor,descrição\n2026-06-01,4500,Cliente A"></textarea>
+            <div style="margin-top:8px"><button type="button" id="run-reconcile">Conciliar</button></div>
+            <div id="reconcile-result" style="margin-top:12px"></div>
+          </div>
+        </section>
+
+        <section id="relatorios" class="view">
+          <div class="page-header">
+            <h2>Relatórios</h2>
+            <p>Exporte lançamentos e contas em CSV para análise externa.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3>Exportar</h3>
+              <div>
+                <label>De <input type="date" id="rep-from"> Até <input type="date" id="rep-to"></label>
+                <button type="button" id="export-csv">Exportar lançamentos</button>
+                <button type="button" id="export-accounts-csv">Exportar contas</button>
+              </div>
+            </div>
+            <p>Gera CSV com lançamentos filtrados por período.</p>
+          </div>
+        </section>
+
+        <section id="bancos" class="view">
+          <div class="page-header">
+            <h2>Bancos & Cartões</h2>
+            <p>Centralize o controle de todas as contas bancárias e cartões corporativos da empresa.</p>
+          </div>
+
+          <div id="pj-banking-prompt-page" class="banking-prompt hidden">
+            <div class="banking-prompt__icon">💡</div>
+            <div class="banking-prompt__text">
+              <strong>Comece cadastrando sua primeira conta</strong>
+              <p>Adicione as contas do Itaú, Bradesco, Nubank PJ ou qualquer banco que a empresa utiliza.</p>
+            </div>
+          </div>
+
+          <div class="cards">
+            <div class="metric-card metric-card--balance">
+              <div class="metric-card__icon">🏦</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label">Saldo total em bancos</span>
+                <strong class="metric-card__value" id="bank-total-balance">R$ 0,00</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--income">
+              <div class="metric-card__icon">📋</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label">Contas cadastradas</span>
+                <strong class="metric-card__value" id="bank-account-count">0</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--cards">
+              <div class="metric-card__icon">💳</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label">Cartões corporativos</span>
+                <strong class="metric-card__value" id="bank-card-count">0</strong>
+              </div>
+            </div>
+            <div class="metric-card metric-card--expense">
+              <div class="metric-card__icon">📉</div>
+              <div class="metric-card__body">
+                <span class="metric-card__label">Encargos este mês</span>
+                <strong class="metric-card__value" id="bank-charges-month">R$ 0,00</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Contas bancárias</h3>
+              <button type="button" id="bank-open-add-account">+ Nova conta bancária</button>
+            </div>
+            <form id="bank-add-account-form" class="hidden">
+              <input type="text" name="name" placeholder="Apelido (ex: Itaú Principal)" required>
+              <input type="text" name="bank" placeholder="Nome do banco" required>
+              <input type="text" name="agency" placeholder="Agência">
+              <input type="text" name="accountNumber" placeholder="Número da conta">
+              <select name="accountType">
+                <option value="corrente">Conta corrente</option>
+                <option value="poupanca">Poupança</option>
+                <option value="pagamento">Conta pagamento</option>
+              </select>
+              <input type="number" name="balance" step="0.01" placeholder="Saldo inicial" required>
+              <button type="submit">Cadastrar conta</button>
+              <button type="button" id="bank-cancel-add-account" class="btn-secondary">Cancelar</button>
+            </form>
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Apelido</th><th>Banco</th><th>Agência</th><th>Conta</th><th>Tipo</th><th>Saldo</th><th>Ações</th></tr></thead>
+                <tbody id="bank-accounts-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Cartões corporativos</h3>
+              <button type="button" id="bank-open-add-card">+ Novo cartão</button>
+            </div>
+            <form id="bank-add-card-form" class="hidden">
+              <input type="text" name="name" placeholder="Nome (ex: Nubank PJ, Itaú Visa)" required>
+              <input type="text" name="holder" placeholder="Titular / CNPJ" required>
+              <input type="text" name="last4" placeholder="Últimos 4 dígitos" maxlength="4" required>
+              <input type="date" name="anniversary" placeholder="Dia de fechamento" required>
+              <button type="submit">Cadastrar cartão</button>
+              <button type="button" id="bank-cancel-add-card" class="btn-secondary">Cancelar</button>
+            </form>
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Cartão</th><th>Titular</th><th>Final</th><th>Fechamento</th><th>Encargos/mês</th><th>Ações</th></tr></thead>
+                <tbody id="bank-cards-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Encargos de cartão</h3>
+              <button type="button" id="bank-open-add-charge">+ Registrar encargo</button>
+            </div>
+            <form id="bank-add-charge-form" class="hidden">
+              <select name="cardId" id="bank-charge-card-select"></select>
+              <input type="date" name="date" required>
+              <select name="type">
+                <option value="annual_fee">Taxa Anual</option>
+                <option value="interest">Juros/Encargos</option>
+                <option value="annuity">Anuidade</option>
+                <option value="insurance">Seguro</option>
+                <option value="other">Outro</option>
+              </select>
+              <input type="text" name="desc" placeholder="Descrição" required>
+              <input type="number" name="amount" step="0.01" placeholder="Valor" required>
+              <button type="submit">Registrar</button>
+              <button type="button" id="bank-cancel-add-charge" class="btn-secondary">Cancelar</button>
+            </form>
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Data</th><th>Cartão</th><th>Tipo</th><th>Valor</th></tr></thead>
+                <tbody id="bank-charges-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="empresa" class="view">
+          <div class="page-header">
+            <h2>Minha Empresa</h2>
+            <p>Cadastro da empresa, regime tributário, centros de custo e DRE.</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><h3>Dados cadastrais</h3></div>
+            <form id="company-form">
+              <input type="text" name="legalName" placeholder="Razão social" required>
+              <input type="text" name="tradeName" placeholder="Nome fantasia">
+              <input type="text" name="cnpj" placeholder="CNPJ" maxlength="18">
+              <select name="taxRegime">
+                <option value="simples">Simples Nacional</option>
+                <option value="presumido">Lucro Presumido</option>
+                <option value="real">Lucro Real</option>
+                <option value="mei">MEI</option>
+              </select>
+              <button type="submit">Salvar dados</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Centros de custo</h3>
+              <button type="button" id="open-add-cost-center">+ Novo centro</button>
+            </div>
+            <form id="add-cost-center-form" class="hidden">
+              <input type="text" name="code" placeholder="Código (ex: ADM)" required>
+              <input type="text" name="name" placeholder="Nome do centro" required>
+              <input type="number" name="budget" step="0.01" placeholder="Orçamento mensal (opcional)">
+              <button type="submit">Adicionar</button>
+              <button type="button" id="cancel-add-cost-center">Cancelar</button>
+            </form>
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Código</th><th>Nome</th><th>Orçamento</th><th>Ações</th></tr></thead>
+                <tbody id="cost-centers-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>DRE — Demonstrativo de Resultado</h3>
+              <button type="button" id="export-dre-company" class="btn-secondary">Exportar CSV</button>
+            </div>
+            <div id="dre-summary-company"></div>
+          </div>
+        </section>
+
+        <section id="usuarios" class="view">
+          <div class="page-header">
+            <h2>Usuários</h2>
+            <p>Gerencie acessos e permissões do sistema.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3>Usuários</h3><button type="button" id="open-add-user">+ Novo usuário</button></div>
+
+            <form id="add-user-form" class="hidden">
+              <input type="text" name="name" placeholder="Nome" required>
+              <input type="email" name="email" placeholder="Email" required>
+              <select name="role"><option value="admin">Admin</option><option value="user">Usuário</option></select>
+              <button type="submit">Criar</button>
+              <button type="button" id="cancel-add-user">Cancelar</button>
+            </form>
+
+            <table class="table" id="users-table">
+              <thead><tr><th>Nome</th><th>Email</th><th>Função</th><th>Ações</th></tr></thead>
+              <tbody id="users-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
