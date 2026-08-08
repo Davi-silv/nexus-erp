@@ -130,15 +130,32 @@ body::before {
 }
 
 .brand__logo {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 14px;
   background: var(--gradient-brand);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px var(--accent-glow);
+  box-shadow: 0 8px 28px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25);
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand__logo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.brand__logo-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
 }
 
 .brand__logo svg { width: 22px; height: 22px; }
@@ -743,14 +760,29 @@ form#add-recurring-form {
 }
 
 .auth-hero__logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
   background: var(--gradient-brand);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 32px var(--accent-glow);
+  box-shadow: 0 16px 40px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.28);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-hero__logo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(255,255,255,0.25), transparent 60%);
+  pointer-events: none;
+}
+
+.auth-hero__logo .brand__logo-img {
+  position: relative;
+  z-index: 1;
 }
 
 .auth-hero h2 {

@@ -21,6 +21,8 @@ import { initBankingModule } from './ui/modules/banking.module.js';
 import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
 import { initPwaInstall } from './ui/pwa-install.js';
 
+import { APP_CONFIG } from './config/app.config.js';
+
 async function bootstrap() {
   try {
     const { registerSW } = await import('virtual:pwa-register');
@@ -106,6 +108,11 @@ async function bootstrap() {
   router.show(router.getInitialView(store.isAuthenticated()), false);
 
   if (store.isAuthenticated()) refreshAll();
+
+  document.title = APP_CONFIG.name;
+  const footer = document.querySelector('.sidebar__footer strong');
+  if (footer) footer.textContent = `${APP_CONFIG.name} v${APP_CONFIG.version}`;
+
   window.__NEXUS_READY__ = true;
 }
 

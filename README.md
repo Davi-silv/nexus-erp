@@ -61,6 +61,29 @@ src/
 
 Dados em localStorage são **100% compatíveis**. O código legado permanece em `js/` para referência.
 
+## Lançamento comercial
+
+Documentação completa em **[docs/](docs/README.md)**:
+
+| Fase | Foco | Documento |
+|------|------|-------------|
+| **Agora** | Deploy MVP + validação | [DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+| **2–4 meses** | Backend SaaS | [BACKEND-MIGRATION.md](docs/BACKEND-MIGRATION.md) |
+| **4–6 meses** | Planos e billing | [MONETIZATION.md](docs/MONETIZATION.md) |
+| **Contínuo** | LGPD e segurança | [SECURITY-LGPD.md](docs/SECURITY-LGPD.md) |
+
+Configuração de produto: `src/config/app.config.js` · Planos: `src/config/plans.config.js`
+
+Deploy rápido:
+
+```bash
+npm run build
+docker build -t nexus-erp . && docker run -p 8080:80 nexus-erp
+```
+
+**Landing page:** abra `marketing/index.html` no navegador ou `npm run dev:landing` (porta 3000).
+CTAs apontam para o app em `index.html#auth`.
+
 ## Melhorias v2
 
 - Monolito de 1.569 linhas → ~20 módulos ES

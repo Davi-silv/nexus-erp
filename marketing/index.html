@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nexus ERP — Gestão financeira inteligente para PF e PME</title>
+  <meta name="description" content="Controle suas finanças pessoais ou o caixa da sua empresa. Dashboard, bancos, DRE, IA e PWA instalável. Comece grátis.">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="Nexus ERP — Finanças PF e PME">
+  <meta property="og:description" content="ERP financeiro moderno com perfis Pessoa Física e Empresa. Instale como app e gerencie tudo em um lugar.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="../public/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="#" class="nav__brand">
+        <div class="nav__logo">
+          <img src="../public/logo-mark.svg" alt="">
+        </div>
+        Nexus ERP
+      </a>
+      <div class="nav__links">
+        <a href="#recursos">Recursos</a>
+        <a href="#planos">Planos</a>
+        <a href="#como-funciona">Como funciona</a>
+      </div>
+      <div class="nav__cta">
+        <a href="../index.html#auth" class="btn btn--ghost">Entrar</a>
+        <a href="../index.html#auth" class="btn btn--primary">Começar grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero__badge">✨ Novo — Perfis PF e PME nativos</div>
+      <h1>Finanças pessoais e empresariais em <span>um só lugar</span></h1>
+      <p class="hero__sub">
+        Dashboard inteligente, bancos & cartões, DRE, análise com IA e app instalável.
+        Feito para quem quer clareza — seja no bolso ou no caixa da empresa.
+      </p>
+      <div class="hero__actions">
+        <a href="../index.html#auth" class="btn btn--primary btn--lg">Criar conta grátis</a>
+        <a href="#planos" class="btn btn--ghost btn--lg">Ver planos</a>
+      </div>
+
+      <div class="hero__mockup" aria-hidden="true">
+        <div class="hero__mockup-bar">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="hero__mockup-body">
+          <div class="mock-sidebar">
+            <div class="mock-nav-item mock-nav-item--active">Dashboard</div>
+            <div class="mock-nav-item">Bancos & Cartões</div>
+            <div class="mock-nav-item">Lançamentos</div>
+            <div class="mock-nav-item">Saúde Financeira</div>
+            <div class="mock-nav-item">Análise IA</div>
+          </div>
+          <div class="mock-main">
+            <div class="mock-cards">
+              <div class="mock-card"><span>Saldo</span><strong>R$ 24.580</strong></div>
+              <div class="mock-card"><span>Receitas</span><strong>R$ 18.200</strong></div>
+              <div class="mock-card"><span>Despesas</span><strong>R$ 9.430</strong></div>
+            </div>
+            <div class="mock-chart">
+              <div class="mock-bar" style="height:45%"></div>
+              <div class="mock-bar" style="height:70%"></div>
+              <div class="mock-bar" style="height:55%"></div>
+              <div class="mock-bar" style="height:85%"></div>
+              <div class="mock-bar" style="height:65%"></div>
+              <div class="mock-bar" style="height:90%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="recursos">
+    <div class="container">
+      <p class="section-label">Recursos</p>
+      <h2 class="section-title">Tudo que você precisa para decidir melhor</h2>
+      <p class="section-desc">Escolha seu perfil e veja o que o Nexus oferece para você.</p>
+
+      <div class="profiles">
+        <button type="button" class="profile-tab active" data-profile="pf">👤 Pessoa Física</button>
+        <button type="button" class="profile-tab" data-profile="pj">🏢 Empresa (PME)</button>
+      </div>
+
+      <div class="features-grid" id="features-pf">
+        <article class="feature-card">
+          <div class="feature-card__icon">📊</div>
+          <h3>Dashboard completo</h3>
+          <p>Saldo, receitas e despesas em tempo real com gráficos intuitivos.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">🏦</div>
+          <h3>Contas e cartões</h3>
+          <p>Cadastre bancos e cartões pessoais com saldo sincronizado.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">🎯</div>
+          <h3>Metas e categorias</h3>
+          <p>Orçamento por categoria com barras de progresso visuais.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">🤖</div>
+          <h3>Análise com IA</h3>
+          <p>Insights sobre seus hábitos e recomendações personalizadas.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">📱</div>
+          <h3>App instalável</h3>
+          <p>Instale no celular ou desktop — funciona como app nativo (PWA).</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">💚</div>
+          <h3>Saúde financeira</h3>
+          <p>Score de 0 a 100 com indicadores de poupança e despesas.</p>
+        </article>
+      </div>
+
+      <div class="features-grid hidden" id="features-pj">
+        <article class="feature-card">
+          <div class="feature-card__icon">🏦</div>
+          <h3>Bancos & Cartões</h3>
+          <p>Centralize todas as contas bancárias e cartões corporativos.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">📋</div>
+          <h3>DRE simplificado</h3>
+          <p>Demonstrativo de resultado com receitas, despesas e margem líquida.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">🏢</div>
+          <h3>Centros de custo</h3>
+          <p>Organize lançamentos por departamento ou projeto.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">📑</div>
+          <h3>Plano de contas</h3>
+          <p>Categorias empresariais: fornecedores, folha, impostos e mais.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">👥</div>
+          <h3>Multi-usuário</h3>
+          <p>Equipe com perfis admin e operacional (planos Business).</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-card__icon">📤</div>
+          <h3>Exportação CSV</h3>
+          <p>Relatórios e DRE exportáveis para contador ou planilha.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="planos">
+    <div class="container">
+      <p class="section-label">Planos</p>
+      <h2 class="section-title">Comece grátis, evolua quando precisar</h2>
+      <p class="section-desc">Preços transparentes para pessoa física e empresa. Sem surpresas.</p>
+
+      <div class="pricing-grid">
+        <article class="price-card">
+          <span class="price-card__tag">Pessoa Física</span>
+          <h3>PF Grátis</h3>
+          <div class="price-card__amount">R$ 0 <small>/mês</small></div>
+          <ul>
+            <li>3 contas bancárias</li>
+            <li>500 lançamentos</li>
+            <li>Metas e categorias</li>
+            <li>5 análises IA/mês</li>
+          </ul>
+          <a href="../index.html#auth" class="btn btn--ghost">Começar grátis</a>
+        </article>
+
+        <article class="price-card price-card--highlight">
+          <span class="price-card__tag">Mais popular · PF</span>
+          <h3>PF Pro</h3>
+          <div class="price-card__amount">R$ 19,90 <small>/mês</small></div>
+          <ul>
+            <li>20 contas e cartões</li>
+            <li>Lançamentos ilimitados</li>
+            <li>IA prioritária</li>
+            <li>Relatórios avançados</li>
+          </ul>
+          <a href="../index.html#auth" class="btn btn--primary">Em breve</a>
+        </article>
+
+        <article class="price-card">
+          <span class="price-card__tag">Empresa PME</span>
+          <h3>PME Starter</h3>
+          <div class="price-card__amount">R$ 49,90 <small>/mês</small></div>
+          <ul>
+            <li>Bancos & Cartões PJ</li>
+            <li>DRE e centros de custo</li>
+            <li>Até 3 usuários</li>
+            <li>Conciliação bancária</li>
+          </ul>
+          <a href="../index.html#auth" class="btn btn--ghost">Em breve</a>
+        </article>
+
+        <article class="price-card">
+          <span class="price-card__tag">Empresa PME</span>
+          <h3>PME Business</h3>
+          <div class="price-card__amount">R$ 99,90 <small>/mês</small></div>
+          <ul>
+            <li>Até 10 usuários</li>
+            <li>Exportação contábil</li>
+            <li>Suporte prioritário</li>
+            <li>Conciliação avançada</li>
+          </ul>
+          <a href="../index.html#auth" class="btn btn--ghost">Em breve</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona">
+    <div class="container">
+      <p class="section-label">Como funciona</p>
+      <h2 class="section-title">Pronto em 3 passos</h2>
+      <p class="section-desc">Sem burocracia. Crie sua conta e comece a organizar em minutos.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step__num">1</div>
+          <h3>Crie sua conta</h3>
+          <p>Escolha Pessoa Física ou Empresa (PME) no cadastro.</p>
+        </div>
+        <div class="step">
+          <div class="step__num">2</div>
+          <h3>Cadastre bancos</h3>
+          <p>Adicione contas e cartões — PF ou corporativos para PJ.</p>
+        </div>
+        <div class="step">
+          <div class="step__num">3</div>
+          <h3>Controle tudo</h3>
+          <p>Lançamentos, metas, DRE e IA num painel único.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <div class="cta__box">
+        <h2>Pronto para organizar suas finanças?</h2>
+        <p>Junte-se ao Nexus ERP. Grátis para começar, premium quando você crescer.</p>
+        <a href="../index.html#auth" class="btn btn--primary btn--lg">Acessar o Nexus ERP →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__links">
+        <a href="../index.html#auth">Acessar app</a>
+        <a href="https://github.com/Davi-silv/nexus-erp" target="_blank" rel="noopener">GitHub</a>
+        <a href="../docs/SECURITY-LGPD.md">Privacidade</a>
+      </div>
+      <p>© 2026 Nexus ERP · Gestão financeira inteligente</p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.profile-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.profile-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const pf = document.getElementById('features-pf');
+        const pj = document.getElementById('features-pj');
+        const isPj = btn.dataset.profile === 'pj';
+        pf.classList.toggle('hidden', isPj);
+        pj.classList.toggle('hidden', !isPj);
+      });
+    });
+  </script>
+  <style>.hidden { display: none !important; }</style>
+</body>
+</html>

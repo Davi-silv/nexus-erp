@@ -8,4 +8,23 @@ playwright/.cache/
 *.log
 .env
 .env.*
+!.env.example
 .DS_Store
+.vscode/
+
+# Arquivos de extensão do navegador (não fazem parte do ERP)
+background.js
+branding.config.js
+content-templates.js
+content.js
+floating.css
+hwFingerprint.js
+jszip.min.js
+overlay.js
+pageHook.js
+sidepanel-templates.js
+sidepanel.css
+sidepanel.html
+sidepanel.js
+/icons/
+/manifest.json

@@ -82,3 +82,8 @@ Nenhuma migração manual necessária.
 
 Os arquivos da extensão "Painel Lovable" permanecem na raiz do repositório,
 separados do ERP. Recomenda-se movê-los para `extension/` em refatoração futura.
+
+## Evolução comercial
+
+Consulte [docs/ROADMAP.md](docs/ROADMAP.md) para o plano de lançamento no mercado
+(MVP estático → SaaS → monetização → escala).

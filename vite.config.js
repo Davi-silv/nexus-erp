@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg', 'logo-mark.svg', 'logo-full.svg'],
       manifest: {
         name: 'Nexus ERP',
         short_name: 'Nexus',
