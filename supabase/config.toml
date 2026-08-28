@@ -1,0 +1,15 @@
+# For detailed schema docs, see [supabase/README.md](../supabase/README.md)
+
+Project id = "nexus-erp"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
