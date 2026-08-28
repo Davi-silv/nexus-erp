@@ -57,6 +57,8 @@
             <li><button type="button" class="nav-item" data-view="conciliacao"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Conciliação</button></li>
             <li><button type="button" class="nav-item" data-view="relatorios"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>Relatórios</button></li>
             <li><button type="button" class="nav-item" data-view="usuarios"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Usuários</button></li>
+            <li><button type="button" class="nav-item" data-view="planos"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>Planos</button></li>
+            <li><button type="button" class="nav-item" data-view="assinatura"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></span>Assinatura</button></li>
           </ul>
         </div>
       </nav>
@@ -98,6 +100,12 @@
         </div>
         <button type="button" id="pwa-install-banner-btn">Instalar</button>
         <button type="button" id="pwa-install-dismiss" class="pwa-banner__close" aria-label="Fechar">×</button>
+      </div>
+
+      <div id="trial-banner" class="trial-banner hidden">
+        <div class="trial-banner__text" id="trial-banner-text"></div>
+        <button type="button" id="trial-banner-plans" class="btn-secondary">Escolher plano</button>
+        <button type="button" id="trial-banner-dismiss" class="trial-banner__close" aria-label="Fechar">×</button>
       </div>
 
       <main class="content">
@@ -929,7 +937,37 @@
           </div>
         </section>
 
+        <section id="planos" class="view">
+          <div class="page-header">
+            <h2>Planos Nexus</h2>
+            <p>Experimente grátis por 30 dias · sem cobrança durante o período gratuito · cancele quando quiser</p>
+          </div>
+          <div id="plans-grid" class="plans-grid"></div>
+        </section>
+
+        <section id="assinatura" class="view">
+          <div class="page-header">
+            <h2>Configurações · Assinatura</h2>
+            <p>Gerencie seu plano, trial e cobrança.</p>
+          </div>
+          <div class="panel">
+            <div id="billing-current-panel"></div>
+            <div id="billing-actions" class="billing-actions"></div>
+          </div>
+        </section>
+
       </main>
+    </div>
+  </div>
+
+  <div id="subscription-expired-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2>Seu teste gratuito terminou</h2>
+      <p>Seus dados continuam seguros. Escolha um plano para continuar utilizando todos os recursos do Nexus.</p>
+      <div class="modal-card__actions">
+        <button type="button" id="expired-modal-plans" class="btn-primary">Ver planos</button>
+        <button type="button" id="expired-modal-logout" class="btn-secondary">Sair</button>
+      </div>
     </div>
   </div>
 

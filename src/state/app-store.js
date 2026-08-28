@@ -10,6 +10,7 @@ import { isSupabaseEnabled } from '../config/supabase.config.js';
 import { supabaseAuthRepo } from '../repositories/supabase/auth.repository.js';
 import { supabaseUserDataRepo } from '../repositories/supabase/user-data.repository.js';
 import { hasLocalDataToMigrate, migrateLocalStorageToSupabase } from '../services/migration.service.js';
+import { subscriptionService } from '../services/subscription.service.js';
 
 /**
  * Store central — Single Source of Truth (padrão Flux unidirecional).
@@ -28,6 +29,13 @@ export class AppStore {
     this._saving = false;
     this._savePending = false;
     this._lastSaveSilent = false;
+    this.subscription = subscriptionService;
+  }
+
+  async #loadSubscription() {
+    if (this.workspaceId) {
+      await this.subscription.load(this.workspaceId);
+    }
   }
 
   async init() {
@@ -87,6 +95,7 @@ export class AppStore {
     sessionStore.setString(STORAGE_KEYS.SESSION, String(userId));
     await this.#maybeMigrateLocalData(ctx.user);
     await this.loadUserData();
+    await this.#loadSubscription();
 
     try {
       this.users = this.workspaceId
@@ -206,6 +215,7 @@ export class AppStore {
       if (r.workspaceId) sessionStore.setString(STORAGE_KEYS.WORKSPACE, r.workspaceId);
       await this.#maybeMigrateLocalData(r.user);
       await this.loadUserData();
+      await this.#loadSubscription();
       this.users = r.workspaceId
         ? await supabaseAuthRepo.listWorkspaceMembers(r.workspaceId)
         : [r.user];
@@ -236,6 +246,7 @@ export class AppStore {
       if (r.workspaceId) sessionStore.setString(STORAGE_KEYS.WORKSPACE, r.workspaceId);
       await this.#maybeMigrateLocalData(r.user);
       await this.loadUserData();
+      await this.#loadSubscription();
       this.users = [r.user];
       this.bus.emit(Events.AUTH_CHANGED, { user: r.user });
       return { ok: true, user: r.user, autoLogin: true };
@@ -305,9 +316,13 @@ export class AppStore {
   }
 
   mutate(fn) {
-    if (!this.currentUserData) return;
+    if (!this.currentUserData) return { ok: false };
+    if (this.cloudMode && !this.subscription.canWrite()) {
+      return { ok: false, reason: 'subscription_inactive' };
+    }
     fn(this.currentUserData);
     this.saveUserData();
+    return { ok: true };
   }
 
   bindCloudAuthListener() {

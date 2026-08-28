@@ -2,8 +2,10 @@ import { uid, toggleForm, fmtMoney, escapeHtml, parseId } from '../../core/utils
 import { renderAccountSelect } from '../chart-registry.js';
 import { isBusiness } from '../../domain/profile.service.js';
 import { renderBankAccountSelect } from './banking.module.js';
+import { FEATURES } from '../../domain/features.js';
+import { guardMutation } from '../subscription-guards.js';
 
-export function initAccountsModule(store, auth) {
+export function initAccountsModule(store, auth, router, subscription) {
   const accountsBody = document.getElementById('accounts-body');
   const accountSelect = document.getElementById('tx-account-select');
   const accountSelectMain = document.getElementById('tx-account-select-main');
@@ -36,9 +38,10 @@ export function initAccountsModule(store, auth) {
     toggleForm(accForm, openAddAcc, false);
   });
 
-  accForm?.addEventListener('submit', e => {
+  accForm?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!auth.requireAuth()) return;
+    if (subscription && !(await guardMutation(store, subscription, FEATURES.FINANCIAL_ACCOUNTS, router))) return;
     const f = new FormData(accForm);
     store.mutate(data => {
       data.accounts.push({

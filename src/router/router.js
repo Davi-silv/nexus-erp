@@ -15,7 +15,9 @@ const PAGE_TITLES = {
   relatorios: 'Relatórios',
   usuarios: 'Usuários',
   empresa: 'Minha Empresa',
-  bancos: 'Bancos & Cartões'
+  bancos: 'Bancos & Cartões',
+  planos: 'Planos',
+  assinatura: 'Assinatura'
 };
 
 export class Router {

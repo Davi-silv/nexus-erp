@@ -43,7 +43,9 @@ export const VIEWS = {
   REPORTS: 'relatorios',
   USERS: 'usuarios',
   COMPANY: 'empresa',
-  BANKING: 'bancos'
+  BANKING: 'bancos',
+  PLANS: 'planos',
+  BILLING: 'assinatura'
 };
 
 export const CHARGE_TYPES = {

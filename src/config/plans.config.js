@@ -1,6 +1,6 @@
 /**
- * Planos comerciais — estrutura para monetização PF e PJ.
- * Hoje informativo; billing será implementado na Fase 3 (ver docs/ROADMAP.md).
+ * Planos comerciais — estrutura legada informativa.
+ * Fonte de verdade: PostgreSQL (plans + plan_features) via subscription.service.js
  */
 export const PLANS = {
   pf: {

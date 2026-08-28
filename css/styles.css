@@ -1707,3 +1707,120 @@ form#add-cost-center-form {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Assinatura & planos ── */
+.trial-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 24px 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(99, 102, 241, 0.1));
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: var(--radius-md);
+}
+.trial-banner.hidden { display: none; }
+.trial-banner__text { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; }
+.trial-banner__text strong { color: #34d399; font-size: 0.75rem; letter-spacing: 0.04em; }
+.trial-banner__close { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 0 0 24px;
+}
+.plan-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.plan-card--recommended { border-color: rgba(99, 102, 241, 0.6); box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2); }
+.plan-card__badge {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+}
+.plan-card__badge--recommended { background: var(--accent); color: #fff; }
+.plan-card__price { font-size: 1.5rem; font-weight: 700; margin: 0; }
+.plan-card__desc { color: var(--text-secondary); font-size: 0.875rem; margin: 0; }
+.plan-card__trial-note { font-size: 0.75rem; color: #34d399; margin: 0; }
+.plan-card__features { list-style: none; padding: 0; margin: 0; flex: 1; font-size: 0.85rem; }
+.plan-card__features li { padding: 4px 0; padding-left: 1.2em; position: relative; }
+.plan-card__features li::before { content: '✓'; position: absolute; left: 0; color: #34d399; }
+.plan-card__cta {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.plan-card__cta--current { opacity: 0.6; cursor: default; }
+
+.billing-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.billing-summary div { display: flex; flex-direction: column; gap: 4px; }
+.billing-summary span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.billing-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.billing-warning { color: #fbbf24; font-size: 0.875rem; grid-column: 1 / -1; }
+
+.feature-gate {
+  text-align: center;
+  padding: 48px 24px;
+  max-width: 480px;
+  margin: 40px auto;
+}
+.feature-gate__icon { font-size: 2.5rem; margin-bottom: 12px; }
+.feature-gate__cta {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+.modal-card__actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+
+@media (max-width: 768px) {
+  .trial-banner { flex-wrap: wrap; margin: 0 12px 8px; }
+  .plans-grid { grid-template-columns: 1fr; }
+}

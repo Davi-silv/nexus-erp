@@ -18,6 +18,9 @@ import { initReconcileModule, initReportsModule } from './ui/modules/reports.mod
 import { initUsersModule } from './ui/modules/users.module.js';
 import { initCompanyModule } from './ui/modules/company.module.js';
 import { initBankingModule } from './ui/modules/banking.module.js';
+import { initBillingModule } from './ui/modules/billing.module.js';
+import { initTrialBanner, initExpiredModal } from './ui/subscription-ui.js';
+import { subscriptionService } from './services/subscription.service.js';
 import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
 import { initPwaInstall } from './ui/pwa-install.js';
 import { initMobileNav } from './ui/mobile-nav.js';
@@ -44,7 +47,7 @@ async function bootstrap() {
   router.init();
 
   const auth = initAuthModule(store, router);
-  const accounts = initAccountsModule(store, auth);
+  const accounts = initAccountsModule(store, auth, router, subscriptionService);
   const transactions = initTransactionsModule(store, auth, accounts);
   const categories = initCategoriesModule(store, charts);
   const recurring = initRecurringModule(store);
@@ -56,6 +59,9 @@ async function bootstrap() {
   const users = initUsersModule(store, auth);
   const company = initCompanyModule(store, auth);
   const banking = initBankingModule(store, auth, router);
+  const billing = initBillingModule(store, router, subscriptionService);
+  const trialBanner = initTrialBanner(store, router, subscriptionService);
+  const expiredModal = initExpiredModal(store, router, subscriptionService);
 
   bindProfileTypeToggle();
 
@@ -75,6 +81,9 @@ async function bootstrap() {
     ai.renderAIHistory();
     auth.refreshAuthUI();
     applyProfileUI(store);
+    trialBanner.refresh();
+    expiredModal.refresh();
+    billing.refresh();
     if (store.currentUser()?.profileType === 'pj') {
       company.refresh();
       banking.refresh();
