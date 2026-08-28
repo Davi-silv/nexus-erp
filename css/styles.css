@@ -340,8 +340,20 @@ body::before {
 
 .sidebar__footer {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   padding: 16px 14px;
   border-top: 1px solid var(--border);
+}
+
+.sidebar__install {
+  width: 100%;
+  justify-content: center;
+}
+
+.sidebar__install.hidden {
+  display: none !important;
 }
 
 .sidebar__footer p {
@@ -2004,6 +2016,30 @@ form#add-cost-center-form {
   z-index: 1000;
   padding: 16px;
 }
+.pwa-install-modal__hint {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-align: left;
+}
+
+.pwa-install-modal__steps {
+  margin: 0 0 8px;
+  padding-left: 1.25rem;
+  text-align: left;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.pwa-install-modal__steps li + li {
+  margin-top: 8px;
+}
+
+.pwa-install-modal .modal-card__actions {
+  margin-top: 16px;
+}
+
 .modal-overlay.hidden { display: none; }
 .modal-card {
   background: var(--surface);

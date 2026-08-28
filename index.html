@@ -47,7 +47,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>
     (function () {
-      var CACHE_VERSION = '8';
+      var CACHE_VERSION = '9';
       try {
         if (localStorage.getItem('nexus-cache-v') !== CACHE_VERSION && 'serviceWorker' in navigator) {
           localStorage.setItem('nexus-cache-v', CACHE_VERSION);
@@ -158,6 +158,10 @@
         </div>
       </nav>
       <div class="sidebar__footer">
+        <button type="button" id="btn-install-sidebar" class="btn-install sidebar__install hidden" title="Instalar aplicativo">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Instalar app
+        </button>
         <p>Powered by <strong>Nexus ERP v2</strong><br>Gestão financeira inteligente</p>
       </div>
     </aside>
@@ -193,7 +197,7 @@
         <div class="pwa-banner__icon">📲</div>
         <div class="pwa-banner__text">
           <strong>Instale o Nexus ERP no seu dispositivo</strong>
-          <span>Acesse offline e use como um app nativo — rápido e prático.</span>
+          <span>Acesse offline em qualquer navegador — Chrome, Edge, Firefox, Safari e mais.</span>
         </div>
         <button type="button" id="pwa-install-banner-btn">Instalar</button>
         <button type="button" id="pwa-install-dismiss" class="pwa-banner__close" aria-label="Fechar">×</button>
@@ -1162,6 +1166,17 @@
         </section>
 
       </main>
+    </div>
+  </div>
+
+  <div id="pwa-install-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pwa-install-modal-title">
+    <div class="modal-card pwa-install-modal">
+      <h2 id="pwa-install-modal-title">Instalar Nexus ERP</h2>
+      <p class="pwa-install-modal__hint">Siga os passos abaixo no <span id="pwa-install-modal-browser">seu navegador</span>:</p>
+      <ol id="pwa-install-modal-steps" class="pwa-install-modal__steps"></ol>
+      <div class="modal-card__actions">
+        <button type="button" id="pwa-install-modal-close" class="btn-primary">Entendi</button>
+      </div>
     </div>
   </div>
 
