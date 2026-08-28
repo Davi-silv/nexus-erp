@@ -6,7 +6,7 @@
   <title>Nexus ERP</title>
   <style id="nexus-mobile-critical">
     /* Crítico: funciona antes do CSS externo e sem JavaScript */
-    @media (max-width: 1024px), (hover: none), (pointer: coarse), (display-mode: standalone) {
+    @media (max-width: 1024px), ((hover: none) and (max-width: 1024px)), ((pointer: coarse) and (max-width: 1024px)), (display-mode: standalone) {
       html .app { display: block !important; }
       html .main { width: 100% !important; max-width: 100vw !important; flex: none !important; }
       html .sidebar:not(.open) { display: none !important; }
@@ -41,7 +41,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>
     (function () {
-      var CACHE_VERSION = '4';
+      var CACHE_VERSION = '5';
       try {
         if (localStorage.getItem('nexus-cache-v') !== CACHE_VERSION && 'serviceWorker' in navigator) {
           localStorage.setItem('nexus-cache-v', CACHE_VERSION);
@@ -60,12 +60,13 @@
           document.documentElement.clientWidth || 9999,
           window.screen && window.screen.width ? window.screen.width : 9999
         );
-        var touch = 'ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
         var coarse = window.matchMedia('(pointer: coarse)').matches;
         var noHover = window.matchMedia('(hover: none)').matches;
         var standalone = window.matchMedia('(display-mode: standalone)').matches
           || window.navigator.standalone === true;
-        return w <= 1024 || touch || coarse || noHover || standalone;
+        var touchPoints = navigator.maxTouchPoints || 0;
+        return w <= 1024 && (coarse || noHover || touchPoints > 0 || standalone)
+          || standalone;
       }
       function applyMobileLayout() {
         document.documentElement.classList.toggle('mobile-layout', isMobileLayout());

@@ -10,12 +10,12 @@ function isMobileLayout() {
     document.documentElement.clientWidth || 9999,
     window.screen?.width || 9999
   );
-  const touch = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0;
   const coarse = window.matchMedia('(pointer: coarse)').matches;
   const noHover = window.matchMedia('(hover: none)').matches;
   const standalone = window.matchMedia('(display-mode: standalone)').matches
     || window.navigator.standalone === true;
-  return w <= 1024 || touch || coarse || noHover || standalone;
+  const touchPoints = navigator.maxTouchPoints || 0;
+  return (w <= 1024 && (coarse || noHover || touchPoints > 0 || standalone)) || standalone;
 }
 
 function syncMobileLayoutClass() {
