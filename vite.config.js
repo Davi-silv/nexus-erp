@@ -22,10 +22,10 @@ export default defineConfig({
         description: 'Gestão financeira inteligente para PF e PME — contas, lançamentos, DRE e análise com IA.',
         theme_color: '#6366f1',
         background_color: '#0f1117',
-        display: 'standalone',
-        orientation: 'portrait-primary',
+        display: 'browser',
+        orientation: 'any',
         scope: '/',
-        start_url: '/?src=pwa&v=5',
+        start_url: '/?src=pwa&v=7',
         lang: 'pt-BR',
         categories: ['finance', 'business', 'productivity'],
         icons: [

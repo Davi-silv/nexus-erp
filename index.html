@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
   <title>Nexus ERP</title>
   <style id="nexus-mobile-critical">
     /* Crítico: funciona antes do CSS externo e sem JavaScript */
@@ -35,9 +35,8 @@
   </style>
   <meta name="description" content="Nexus ERP: painel financeiro moderno com relatórios, conciliação e gestão de contas.">
   <meta name="theme-color" content="#6366f1">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="no">
+  <meta name="apple-mobile-web-app-capable" content="no">
   <meta name="apple-mobile-web-app-title" content="Nexus ERP">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -46,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>
     (function () {
-      var CACHE_VERSION = '6';
+      var CACHE_VERSION = '7';
       try {
         if (localStorage.getItem('nexus-cache-v') !== CACHE_VERSION && 'serviceWorker' in navigator) {
           localStorage.setItem('nexus-cache-v', CACHE_VERSION);
