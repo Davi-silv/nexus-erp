@@ -149,7 +149,7 @@ export function initBillingModule(store, router, subscription) {
     if (!billingPanel) return;
     const snap = subscription.getSnapshot();
     if (!snap) {
-      billingPanel.innerHTML = '<p>Carregue sua assinatura após login.</p>';
+      billingPanel.innerHTML = '<p>Carregue sua assinatura após o login.</p>';
       return;
     }
 

@@ -13,14 +13,17 @@
     "test:integration": "vitest run tests/integration",
     "test:e2e": "bash scripts/test-e2e.sh",
     "test:e2e:ui": "bash scripts/test-e2e.sh --ui",
-    "test:all": "npm test && npm run test:e2e"
+    "test:all": "npm test && npm run test:e2e",
+    "spell": "cspell \"{src,index.html,css,tests,scripts,docs,supabase}/**/*.{js,html,css,md,sql,sh}\" cspell.json package.json vite.config.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",
     "javascript-obfuscator": "^5.4.2"
   },
   "devDependencies": {
+    "@cspell/dict-pt-br": "^2.4.2",
     "@playwright/test": "^1.62.1",
+    "cspell": "^10.1.1",
     "jsdom": "^30.0.1",
     "vite": "^6.2.0",
     "vite-plugin-pwa": "^1.3.0",
