@@ -1,6 +1,6 @@
 # For detailed schema docs, see [supabase/README.md](../supabase/README.md)
 
-Project id = "nexus-erp"
+project_id = "nexus-erp"
 
 [api]
 enabled = true
