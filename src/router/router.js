@@ -16,6 +16,12 @@ const PAGE_TITLES = {
   usuarios: 'Usuários',
   empresa: 'Minha Empresa',
   bancos: 'Bancos & Cartões',
+  clientes: 'Clientes',
+  servicos: 'Serviços',
+  orcamentos: 'Orçamentos',
+  'contas-receber': 'Contas a Receber',
+  'config-fiscal': 'Configurações Fiscais',
+  'notas-fiscais': 'Notas Fiscais',
   planos: 'Planos',
   assinatura: 'Assinatura'
 };

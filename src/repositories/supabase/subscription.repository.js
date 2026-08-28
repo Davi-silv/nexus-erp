@@ -14,7 +14,7 @@ export class SupabaseSubscriptionRepository {
   async listPlans() {
     const { data, error } = await this.#client.rpc('list_plans_with_features');
     if (error) throw error;
-    return data || [];
+    return normalizePlansPayload(data);
   }
 
   async canUseFeature(workspaceId, feature) {
@@ -71,3 +71,17 @@ export class SupabaseSubscriptionRepository {
 }
 
 export const supabaseSubscriptionRepo = new SupabaseSubscriptionRepository();
+
+function normalizePlansPayload(data) {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  if (typeof data === 'string') {
+    try {
+      const parsed = JSON.parse(data);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}

@@ -19,6 +19,13 @@ import { initUsersModule } from './ui/modules/users.module.js';
 import { initCompanyModule } from './ui/modules/company.module.js';
 import { initBankingModule } from './ui/modules/banking.module.js';
 import { initBillingModule } from './ui/modules/billing.module.js';
+import {
+  initCustomersModule,
+  initServicesModule,
+  initQuotesModule,
+  initReceivablesModule,
+  initFiscalModule
+} from './ui/modules/commercial.module.js';
 import { initTrialBanner, initExpiredModal } from './ui/subscription-ui.js';
 import { subscriptionService } from './services/subscription.service.js';
 import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
@@ -61,6 +68,21 @@ async function bootstrap() {
   const company = initCompanyModule(store, auth);
   const banking = initBankingModule(store, auth, router);
   const billing = initBillingModule(store, router, subscriptionService);
+  const customers = initCustomersModule(store, auth, router, subscriptionService);
+  const services = initServicesModule(store, auth, router, subscriptionService);
+  const quotes = initQuotesModule(store, auth, router, subscriptionService);
+  const receivables = initReceivablesModule(store, auth, router, subscriptionService);
+  const fiscal = initFiscalModule(store, auth, router, subscriptionService);
+  router.onNavigate = async (viewId) => {
+    if (viewId === 'planos' || viewId === 'assinatura') await billing.refresh();
+    if (['clientes', 'servicos', 'orcamentos', 'contas-receber', 'notas-fiscais', 'config-fiscal'].includes(viewId)) {
+      await customers.refresh();
+      await services.refresh();
+      await quotes.refresh();
+      await receivables.refresh();
+      await fiscal.refresh();
+    }
+  };
   const trialBanner = initTrialBanner(store, router, subscriptionService);
   const expiredModal = initExpiredModal(store, router, subscriptionService);
 
@@ -84,7 +106,12 @@ async function bootstrap() {
     applyProfileUI(store);
     trialBanner.refresh();
     expiredModal.refresh();
-    billing.refresh();
+    await billing.refresh();
+    customers.refresh();
+    services.refresh();
+    quotes.refresh();
+    receivables.refresh();
+    fiscal.refresh();
     if (store.currentUser()?.profileType === 'pj') {
       company.refresh();
       banking.refresh();
@@ -120,6 +147,7 @@ async function bootstrap() {
   auth.refreshAuthUI();
   router.show(router.getInitialView(store.isAuthenticated()), false);
 
+  await billing.refresh();
   if (store.isAuthenticated()) await refreshAll();
 
   document.title = APP_CONFIG.name;

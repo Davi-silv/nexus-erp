@@ -3,6 +3,7 @@
  * Modo local (sem Supabase): acesso completo para dev/E2E apenas.
  */
 import { isSupabaseEnabled } from '../config/supabase.config.js';
+import { COMMERCIAL_PLANS } from '../config/plans.config.js';
 import { supabaseSubscriptionRepo } from '../repositories/supabase/subscription.repository.js';
 import { FEATURES, TRIAL_PLAN_SLUG } from '../domain/features.js';
 
@@ -29,7 +30,6 @@ export class SubscriptionService {
     this.#workspaceId = workspaceId;
     if (!isSupabaseEnabled || !workspaceId) {
       this.#snapshot = { ...LOCAL_SNAPSHOT };
-      this.#plans = [];
       return this.#snapshot;
     }
     this.#snapshot = await supabaseSubscriptionRepo.getSnapshot(workspaceId);
@@ -38,10 +38,16 @@ export class SubscriptionService {
 
   async loadPlans() {
     if (!isSupabaseEnabled) {
-      this.#plans = getLocalPlansCatalog();
+      this.#plans = [...COMMERCIAL_PLANS];
       return this.#plans;
     }
-    this.#plans = await supabaseSubscriptionRepo.listPlans();
+    try {
+      const plans = await supabaseSubscriptionRepo.listPlans();
+      this.#plans = plans.length ? plans : [...COMMERCIAL_PLANS];
+    } catch (err) {
+      console.warn('[nexus] Falha ao carregar planos do Supabase — usando catálogo local:', err?.message || err);
+      this.#plans = [...COMMERCIAL_PLANS];
+    }
     return this.#plans;
   }
 
@@ -144,15 +150,6 @@ export class SubscriptionService {
   }
 }
 
-function getLocalPlansCatalog() {
-  return [
-    { slug: 'personal', name: 'Nexus Pessoal', price_monthly: 19.9, recommended: false, sort_order: 1 },
-    { slug: 'start', name: 'Nexus Start', price_monthly: 49.9, recommended: false, sort_order: 2 },
-    { slug: 'pro', name: 'Nexus Pro', price_monthly: 99.9, recommended: true, sort_order: 3 },
-    { slug: 'business', name: 'Nexus Business', price_monthly: 179.9, recommended: false, sort_order: 4 }
-  ];
-}
-
 export const subscriptionService = new SubscriptionService();
 
 /** Atalhos reutilizáveis */
@@ -162,3 +159,4 @@ export async function canUseFeature(workspaceId, feature) {
 }
 
 export { FEATURES };
+

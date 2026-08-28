@@ -1,7 +1,47 @@
 /**
- * Planos comerciais — estrutura legada informativa.
- * Fonte de verdade: PostgreSQL (plans + plan_features) via subscription.service.js
+ * Catálogo comercial — fallback local e referência de preços.
+ * Fonte de verdade em produção: PostgreSQL (plans + plan_features).
  */
+export const COMMERCIAL_PLANS = [
+  {
+    slug: 'personal',
+    name: 'Nexus Pessoal',
+    description: 'Controle financeiro pessoal completo',
+    price_monthly: 19.9,
+    currency: 'BRL',
+    recommended: false,
+    sort_order: 1
+  },
+  {
+    slug: 'start',
+    name: 'Nexus Start',
+    description: 'Autônomos e MEIs — fluxo de caixa e operacional',
+    price_monthly: 49.9,
+    currency: 'BRL',
+    recommended: false,
+    sort_order: 2
+  },
+  {
+    slug: 'pro',
+    name: 'Nexus Pro',
+    description: 'MEIs e pequenas empresas — gestão financeira completa',
+    price_monthly: 99.9,
+    currency: 'BRL',
+    recommended: true,
+    sort_order: 3
+  },
+  {
+    slug: 'business',
+    name: 'Nexus Business',
+    description: 'Empresas em crescimento — escala e auditoria',
+    price_monthly: 179.9,
+    currency: 'BRL',
+    recommended: false,
+    sort_order: 4
+  }
+];
+
+/** @deprecated — use COMMERCIAL_PLANS / subscription.service */
 export const PLANS = {
   pf: {
     free: {

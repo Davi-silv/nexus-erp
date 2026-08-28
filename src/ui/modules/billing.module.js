@@ -37,15 +37,70 @@ const PLAN_HIGHLIGHTS = {
   ]
 };
 
+const FEATURE_DISPLAY = {
+  users: (limit) => limit ? `Até ${limit} usuários` : 'Multi-usuário',
+  financial_accounts: (limit) => limit ? `Até ${limit} contas financeiras` : 'Contas financeiras',
+  ai_requests: (limit) => limit ? `${limit} consultas IA/mês` : 'Nexus IA',
+  accounts_payable: () => 'Contas a pagar',
+  accounts_receivable: () => 'Contas a receber',
+  customers: () => 'Cadastro de clientes',
+  suppliers: () => 'Cadastro de fornecedores',
+  dre: () => 'DRE empresarial',
+  cost_centers: () => 'Centros de custo',
+  advanced_reports: () => 'Relatórios avançados',
+  cash_projection: () => 'Projeção de caixa',
+  financial_score: () => 'Saúde financeira',
+  bank_reconciliation: () => 'Conciliação bancária',
+  audit_logs: () => 'Log de auditoria',
+  advanced_permissions: () => 'Permissões avançadas',
+  exports_pdf: () => 'Exportação PDF',
+  exports_xlsx: () => 'Exportação XLSX',
+  exports_csv: () => 'Exportação CSV'
+};
+
+function planFeatureLines(plan) {
+  if (Array.isArray(plan.features) && plan.features.length) {
+    const lines = plan.features
+      .filter(f => f.enabled)
+      .map(f => {
+        const labelFn = FEATURE_DISPLAY[f.feature];
+        if (labelFn) return labelFn(f.limit_value);
+        const label = FEATURE_LABELS[f.feature] || f.feature;
+        return f.limit_value != null ? `${label} (até ${f.limit_value})` : label;
+      });
+    if (lines.length) return lines.slice(0, 8);
+  }
+  return PLAN_HIGHLIGHTS[plan.slug] || [];
+}
+
 export function initBillingModule(store, router, subscription) {
   const plansGrid = document.getElementById('plans-grid');
   const billingPanel = document.getElementById('billing-current-panel');
   const billingActions = document.getElementById('billing-actions');
 
   async function refresh() {
-    await subscription.loadPlans();
-    renderPlansPage();
+    if (plansGrid) {
+      plansGrid.innerHTML = '<p class="plans-grid__status">Carregando planos...</p>';
+    }
+    try {
+      await subscription.loadPlans();
+      renderPlansPage();
+    } catch (err) {
+      console.error('[nexus] Erro ao carregar planos:', err);
+      renderPlansError(err?.message || 'Não foi possível carregar os planos.');
+    }
     renderBillingSettings();
+  }
+
+  function renderPlansError(message) {
+    if (!plansGrid) return;
+    plansGrid.innerHTML = `
+      <div class="plans-grid__status plans-grid__status--error">
+        <p>${escapeHtml(message)}</p>
+        <button type="button" class="btn-secondary" id="plans-retry">Tentar novamente</button>
+      </div>
+    `;
+    plansGrid.querySelector('#plans-retry')?.addEventListener('click', () => refresh());
   }
 
   function renderPlansPage() {
@@ -53,11 +108,16 @@ export function initBillingModule(store, router, subscription) {
     const snap = subscription.getSnapshot();
     const plans = [...subscription.getPlans()].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
+    if (!plans.length) {
+      renderPlansError('Nenhum plano disponível no momento.');
+      return;
+    }
+
     plansGrid.innerHTML = plans.map(plan => {
       const price = plan.price_monthly != null
-        ? fmtMoney(plan.price_monthly).replace('R$ ', 'R$') + '/mês'
+        ? fmtMoney(Number(plan.price_monthly)).replace('R$ ', 'R$') + '/mês'
         : '—';
-      const highlights = PLAN_HIGHLIGHTS[plan.slug] || [];
+      const highlights = planFeatureLines(plan);
       const isCurrent = snap?.effective_plan?.slug === plan.slug && snap?.is_active;
       const badge = plan.recommended
         ? '<span class="plan-card__badge plan-card__badge--recommended">MAIS ESCOLHIDO</span>'
@@ -106,7 +166,7 @@ export function initBillingModule(store, router, subscription) {
           <div><span>Data final</span><strong>${subscription.formatTrialEndDate()}</strong></div>
         ` : ''}
         ${snap.effective_plan?.price_monthly && !snap.is_trialing ? `
-          <div><span>Valor</span><strong>${fmtMoney(snap.effective_plan.price_monthly)}/mês</strong></div>
+          <div><span>Valor</span><strong>${fmtMoney(Number(snap.effective_plan.price_monthly))}/mês</strong></div>
         ` : ''}
         ${snap.current_period_end ? `
           <div><span>Próxima cobrança</span><strong>${new Date(snap.current_period_end).toLocaleDateString('pt-BR')}</strong></div>
@@ -133,6 +193,10 @@ export function initBillingModule(store, router, subscription) {
   plansGrid?.addEventListener('click', async e => {
     const btn = e.target.closest('[data-plan]');
     if (!btn || btn.disabled) return;
+    if (!store.isAuthenticated()) {
+      router.navigate('auth');
+      return;
+    }
     const slug = btn.dataset.plan;
     try {
       await subscription.selectPlan(slug);
