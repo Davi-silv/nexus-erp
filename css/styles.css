@@ -101,6 +101,7 @@ html.mobile-layout .btn-menu {
 
 html.mobile-layout .sidebar:not(.open) {
   display: none !important;
+  pointer-events: none;
 }
 
 html.mobile-layout .sidebar.open {
@@ -119,6 +120,7 @@ html.mobile-layout .sidebar.open {
   box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  pointer-events: auto;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -130,13 +132,15 @@ html.mobile-layout .sidebar__close {
 }
 
 html.mobile-layout .sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
 html.mobile-layout .sidebar-overlay.active {
   display: block;
-  touch-action: none;
 }
 
 html.mobile-layout .topbar {
@@ -1484,7 +1488,6 @@ textarea#statement-paste {
 
   .sidebar-overlay.active {
     display: block;
-    touch-action: none;
   }
 
   .content { padding: 16px 12px 32px; }

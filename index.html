@@ -25,6 +25,11 @@
         height: 100dvh;
         background: #0a0f1e;
         overflow-y: auto;
+        pointer-events: auto !important;
+      }
+      html .sidebar-overlay.active {
+        display: block !important;
+        z-index: 150;
       }
     }
   </style>
@@ -41,7 +46,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>
     (function () {
-      var CACHE_VERSION = '5';
+      var CACHE_VERSION = '6';
       try {
         if (localStorage.getItem('nexus-cache-v') !== CACHE_VERSION && 'serviceWorker' in navigator) {
           localStorage.setItem('nexus-cache-v', CACHE_VERSION);
@@ -155,6 +160,8 @@
         <p>Powered by <strong>Nexus ERP v2</strong><br>Gestão financeira inteligente</p>
       </div>
     </aside>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
 
     <div class="main">
       <header class="topbar">
@@ -1167,8 +1174,6 @@
       </div>
     </div>
   </div>
-
-  <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
 
   <script type="module" src="/src/main.js"></script>
 </body>
