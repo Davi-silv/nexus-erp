@@ -23,6 +23,7 @@ import { initTrialBanner, initExpiredModal } from './ui/subscription-ui.js';
 import { subscriptionService } from './services/subscription.service.js';
 import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
 import { initPwaInstall } from './ui/pwa-install.js';
+import { initPwaUpdate } from './ui/pwa-update.js';
 import { initMobileNav } from './ui/mobile-nav.js';
 
 import { APP_CONFIG } from './config/app.config.js';
@@ -30,7 +31,7 @@ import { APP_CONFIG } from './config/app.config.js';
 async function bootstrap() {
   try {
     const { registerSW } = await import('virtual:pwa-register');
-    registerSW({ immediate: true });
+    initPwaUpdate(registerSW);
   } catch {
     /* PWA indisponível — ambiente de teste ou servidor estático */
   }
