@@ -82,6 +82,70 @@ body {
 
 body.nav-open {
   overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+/* Mobile layout — classe aplicada via script inline (antes do paint) */
+html.mobile-layout .app {
+  display: block;
+}
+
+html.mobile-layout .main {
+  width: 100%;
+  min-height: 100dvh;
+  min-height: 100vh;
+}
+
+html.mobile-layout .btn-menu {
+  display: flex;
+}
+
+html.mobile-layout .sidebar:not(.open) {
+  display: none !important;
+}
+
+html.mobile-layout .sidebar.open {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 200;
+  width: min(85vw, 280px);
+  max-width: 85vw;
+  height: 100dvh;
+  height: 100%;
+  padding: max(24px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
+  background: var(--bg-base);
+  border-right: 1px solid var(--border);
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.mobile-layout .sidebar__close {
+  display: flex;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+html.mobile-layout .sidebar-overlay {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.mobile-layout .sidebar-overlay.active {
+  display: block;
+  touch-action: none;
+}
+
+html.mobile-layout .topbar {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--bg-base);
+  padding-top: max(10px, env(safe-area-inset-top, 0px));
 }
 
 /* subtle grid overlay */

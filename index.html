@@ -15,6 +15,23 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    (function () {
+      function isMobileLayout() {
+        var w = window.innerWidth || document.documentElement.clientWidth || 9999;
+        var coarse = window.matchMedia('(pointer: coarse)').matches;
+        var standalone = window.matchMedia('(display-mode: standalone)').matches;
+        return w <= 820 || (coarse && w <= 1024) || (standalone && w <= 1024);
+      }
+      function applyMobileLayout() {
+        document.documentElement.classList.toggle('mobile-layout', isMobileLayout());
+      }
+      applyMobileLayout();
+      window.addEventListener('resize', applyMobileLayout);
+      window.addEventListener('orientationchange', applyMobileLayout);
+      window.__NEXUS_APPLY_MOBILE_LAYOUT__ = applyMobileLayout;
+    })();
+  </script>
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>

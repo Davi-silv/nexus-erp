@@ -7,9 +7,9 @@ export function initPwaUpdate(registerSW) {
   registerSW({
     immediate: true,
     onRegisteredSW(_swUrl, registration) {
-      if (registration) {
-        setInterval(() => registration.update(), 60 * 60 * 1000);
-      }
+      if (!registration) return;
+      registration.update();
+      setInterval(() => registration.update(), 30 * 60 * 1000);
     },
     onNeedRefresh() {
       showUpdateBanner(() => {
@@ -17,6 +17,15 @@ export function initPwaUpdate(registerSW) {
         refreshing = true;
         window.location.reload();
       });
+      // PWA instalado: recarrega automaticamente para aplicar CSS/JS novo
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        setTimeout(() => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        }, 1500);
+      }
     }
   });
 }

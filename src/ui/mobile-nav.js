@@ -1,6 +1,17 @@
 /**
  * Navegação mobile — drawer lateral com overlay.
  */
+function isMobileLayout() {
+  const w = window.innerWidth || document.documentElement.clientWidth;
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const standalone = window.matchMedia('(display-mode: standalone)').matches;
+  return w <= 820 || (coarse && w <= 1024) || (standalone && w <= 1024);
+}
+
+function syncMobileLayoutClass() {
+  document.documentElement.classList.toggle('mobile-layout', isMobileLayout());
+}
+
 export function initMobileNav() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebar-overlay');
@@ -8,7 +19,9 @@ export function initMobileNav() {
   const closeBtn = document.getElementById('btn-sidebar-close');
   if (!sidebar || !toggle) return;
 
-  const mq = window.matchMedia('(max-width: 820px)');
+  syncMobileLayoutClass();
+  window.addEventListener('resize', syncMobileLayoutClass);
+  window.addEventListener('orientationchange', syncMobileLayoutClass);
 
   function close() {
     sidebar.classList.remove('open');
@@ -19,7 +32,7 @@ export function initMobileNav() {
   }
 
   function open() {
-    if (!mq.matches) return;
+    if (!isMobileLayout()) return;
     sidebar.classList.add('open');
     overlay?.classList.add('active');
     overlay?.setAttribute('aria-hidden', 'false');
@@ -39,8 +52,9 @@ export function initMobileNav() {
   });
   sidebar.querySelectorAll('.nav-item').forEach((btn) => btn.addEventListener('click', close));
 
-  mq.addEventListener('change', (e) => {
-    if (!e.matches) close();
+  window.matchMedia('(max-width: 1024px)').addEventListener('change', () => {
+    syncMobileLayoutClass();
+    if (!isMobileLayout()) close();
   });
 
   close();
