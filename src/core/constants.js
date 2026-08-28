@@ -4,6 +4,7 @@ export { PROFILE } from '../domain/profile.service.js';
 export const STORAGE_KEYS = {
   USERS: 'nexus:users',
   SESSION: 'nexus:currentUser',
+  WORKSPACE: 'nexus:currentWorkspace',
   AI_CONFIG: 'nexus:ai-config',
   userPrefix: (uid) => `nexus:user:${uid}:`
 };

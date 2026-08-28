@@ -1,4 +1,4 @@
-import { uid, toggleForm, fmtMoney, escapeHtml } from '../../core/utils.js';
+import { uid, toggleForm, fmtMoney, escapeHtml, parseId } from '../../core/utils.js';
 import { categorySpent } from '../../domain/finance.service.js';
 
 export function initCategoriesModule(store, charts) {
@@ -76,7 +76,7 @@ export function initCategoriesModule(store, charts) {
 
   categoriesBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('cat-del')) return;
-    const id = Number(e.target.dataset.id);
+    const id = parseId(e.target.dataset.id);
     store.mutate(data => {
       data.categories = data.categories.filter(c => c.id !== id);
       data.goals = data.goals.filter(g => g.categoryId !== id);
@@ -98,11 +98,12 @@ export function initCategoriesModule(store, charts) {
   addGoalForm?.addEventListener('submit', e => {
     e.preventDefault();
     const f = new FormData(addGoalForm);
-    const categoryId = Number(f.get('categoryId'));
+    const categoryId = parseId(f.get('categoryId'));
     const limit = parseFloat(f.get('limit')) || 0;
     store.mutate(data => {
+      const existing = data.goals.find(g => g.categoryId === categoryId);
       data.goals = data.goals.filter(g => g.categoryId !== categoryId);
-      data.goals.push({ categoryId, limit });
+      data.goals.push({ id: existing?.id || uid(), categoryId, limit });
     });
     renderGoals();
     addGoalForm.reset();

@@ -40,6 +40,7 @@ async function bootstrap() {
   const charts = new ChartRegistry();
 
   await store.init();
+  store.bindCloudAuthListener();
   router.init();
 
   const auth = initAuthModule(store, router);
@@ -59,9 +60,9 @@ async function bootstrap() {
   bindProfileTypeToggle();
 
   /** Render seletivo por domínio — substitui o mega-render() monolítico */
-  function refreshAll() {
+  async function refreshAll() {
     if (!store.isAuthenticated()) return;
-    if (!store.currentUserData) store.loadUserData();
+    if (!store.currentUserData) await store.loadUserData();
 
     accounts.renderAccounts();
     accounts.renderAccountOptions();
@@ -84,11 +85,11 @@ async function bootstrap() {
     }
   }
 
-  bus.on(Events.AUTH_CHANGED, ({ user }) => {
+  bus.on(Events.AUTH_CHANGED, async ({ user }) => {
     auth.refreshAuthUI();
     if (user) {
-      store.loadUserData();
-      refreshAll();
+      await store.loadUserData();
+      await refreshAll();
       if (user.profileType === 'pj' && store.currentUserData?.accounts.length === 0) {
         router.navigate('bancos');
       } else {
@@ -109,7 +110,7 @@ async function bootstrap() {
   auth.refreshAuthUI();
   router.show(router.getInitialView(store.isAuthenticated()), false);
 
-  if (store.isAuthenticated()) refreshAll();
+  if (store.isAuthenticated()) await refreshAll();
 
   document.title = APP_CONFIG.name;
   const footer = document.querySelector('.sidebar__footer strong');

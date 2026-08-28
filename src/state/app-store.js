@@ -6,10 +6,14 @@ import { usersRepo } from '../repositories/users.repository.js';
 import { userDataRepo } from '../repositories/user-data.repository.js';
 import { syncAccountBalances } from '../domain/finance.service.js';
 import { PROFILE, getDefaultCategories } from '../domain/profile.service.js';
+import { isSupabaseEnabled } from '../config/supabase.config.js';
+import { supabaseAuthRepo } from '../repositories/supabase/auth.repository.js';
+import { supabaseUserDataRepo } from '../repositories/supabase/user-data.repository.js';
+import { hasLocalDataToMigrate, migrateLocalStorageToSupabase } from '../services/migration.service.js';
 
 /**
  * Store central — Single Source of Truth (padrão Flux unidirecional).
- * Repositórios para persistência; EventBus para notificações.
+ * Modo local: localStorage. Modo cloud: Supabase Auth + PostgreSQL.
  */
 export class AppStore {
   constructor(eventBus) {
@@ -17,9 +21,24 @@ export class AppStore {
     this.users = [];
     this.currentUserId = null;
     this.currentUserData = null;
+    this.workspaceId = null;
+    this.cloudMode = isSupabaseEnabled;
+    this._sessionUser = null;
+    this._saveTimer = null;
+    this._saving = false;
+    this._savePending = false;
+    this._lastSaveSilent = false;
   }
 
   async init() {
+    if (this.cloudMode) {
+      await this.#initCloud();
+      return;
+    }
+    await this.#initLocal();
+  }
+
+  async #initLocal() {
     this.users = usersRepo.load();
     if (this.users.length === 0) {
       const pwHash = await hashPassword(DEFAULT_ADMIN.password);
@@ -42,12 +61,53 @@ export class AppStore {
 
     const sessionId = sessionStore.getString(STORAGE_KEYS.SESSION);
     if (sessionId) {
-      this.currentUserId = Number(sessionId);
-      this.loadUserData();
+      this.currentUserId = parseSessionId(sessionId);
+      await this.loadUserData();
     }
   }
 
+  async #initCloud() {
+    const session = await supabaseAuthRepo.getSession();
+    if (session?.user) {
+      await this.#applyCloudSession(session.user.id);
+    }
+  }
+
+  async #applyCloudSession(userId) {
+    const ctx = await supabaseAuthRepo.loadUserContext(userId);
+    this.currentUserId = userId;
+    this._sessionUser = ctx.user;
+    this.workspaceId = ctx.workspaceId || sessionStore.getString(STORAGE_KEYS.WORKSPACE);
+
+    if (!this.workspaceId && ctx.workspaceId) {
+      this.workspaceId = ctx.workspaceId;
+      sessionStore.setString(STORAGE_KEYS.WORKSPACE, this.workspaceId);
+    }
+
+    sessionStore.setString(STORAGE_KEYS.SESSION, String(userId));
+    await this.#maybeMigrateLocalData(ctx.user);
+    await this.loadUserData();
+
+    try {
+      this.users = this.workspaceId
+        ? await supabaseAuthRepo.listWorkspaceMembers(this.workspaceId)
+        : [ctx.user];
+    } catch {
+      this.users = [ctx.user];
+    }
+
+    this.bus.emit(Events.AUTH_CHANGED, { user: ctx.user });
+  }
+
+  async #maybeMigrateLocalData(user) {
+    if (!hasLocalDataToMigrate()) return;
+    const mig = await migrateLocalStorageToSupabase(user, this.workspaceId);
+    if (mig.migrated) console.info('[nexus] Dados locais migrados para Supabase');
+    if (!mig.ok && mig.msg) console.warn('[nexus] Migração:', mig.msg);
+  }
+
   currentUser() {
+    if (this.cloudMode) return this._sessionUser;
     return usersRepo.findById(this.currentUserId, this.users);
   }
 
@@ -55,9 +115,19 @@ export class AppStore {
     return !!this.currentUserId;
   }
 
-  loadUserData() {
+  isCloudMode() {
+    return this.cloudMode;
+  }
+
+  async loadUserData() {
     if (!this.currentUserId) return;
-    this.currentUserData = userDataRepo.load(this.currentUserId);
+
+    if (this.cloudMode) {
+      this.currentUserData = await supabaseUserDataRepo.load(this.workspaceId);
+    } else {
+      this.currentUserData = userDataRepo.load(this.currentUserId);
+    }
+
     if (!this.currentUserData.costCenters) this.currentUserData.costCenters = [];
     const u = this.currentUser();
     if (u && !u.profileType) u.profileType = PROFILE.PF;
@@ -66,9 +136,55 @@ export class AppStore {
 
   saveUserData({ silent = false } = {}) {
     if (!this.currentUserId || !this.currentUserData) return;
+
     this.#syncBalances();
+
+    if (this.cloudMode) {
+      this.#scheduleCloudSave(silent);
+      return;
+    }
+
     userDataRepo.save(this.currentUserId, this.currentUserData);
     if (!silent) this.bus.emit(Events.DATA_CHANGED);
+  }
+
+  #scheduleCloudSave(silent) {
+    this._lastSaveSilent = silent;
+    clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => this.#flushCloudSave(), 400);
+  }
+
+  async #flushCloudSave() {
+    if (this._saving) {
+      this._savePending = true;
+      return;
+    }
+    if (!this.workspaceId) {
+      console.error('[nexus] workspaceId ausente — dados não salvos no cloud');
+      return;
+    }
+
+    const silent = this._lastSaveSilent;
+    const snapshot = this.currentUserData;
+    this._saving = true;
+
+    try {
+      await supabaseUserDataRepo.save(this.workspaceId, snapshot, this.currentUserId);
+      const fresh = await supabaseUserDataRepo.load(this.workspaceId);
+      if (fresh && this.currentUserData === snapshot) {
+        this.currentUserData = fresh;
+        this.#syncBalances();
+      }
+      if (!silent) this.bus.emit(Events.DATA_CHANGED);
+    } catch (err) {
+      console.error('[nexus] Erro ao salvar no Supabase:', err.message);
+    } finally {
+      this._saving = false;
+      if (this._savePending) {
+        this._savePending = false;
+        await this.#flushCloudSave();
+      }
+    }
   }
 
   #syncBalances() {
@@ -80,18 +196,51 @@ export class AppStore {
   }
 
   async login(email, pass) {
+    if (this.cloudMode) {
+      const r = await supabaseAuthRepo.signIn(email, pass);
+      if (!r.ok) return r;
+      this.currentUserId = r.user.id;
+      this._sessionUser = r.user;
+      this.workspaceId = r.workspaceId;
+      sessionStore.setString(STORAGE_KEYS.SESSION, String(r.user.id));
+      if (r.workspaceId) sessionStore.setString(STORAGE_KEYS.WORKSPACE, r.workspaceId);
+      await this.#maybeMigrateLocalData(r.user);
+      await this.loadUserData();
+      this.users = r.workspaceId
+        ? await supabaseAuthRepo.listWorkspaceMembers(r.workspaceId)
+        : [r.user];
+      this.bus.emit(Events.AUTH_CHANGED, { user: r.user });
+      return { ok: true };
+    }
+
     const user = usersRepo.findByEmail(email, this.users);
     if (!user) return { ok: false, msg: 'Usuário não encontrado' };
     const h = await hashPassword(pass);
     if (h !== user.passwordHash) return { ok: false, msg: 'Senha inválida' };
     this.currentUserId = user.id;
     sessionStore.setString(STORAGE_KEYS.SESSION, String(user.id));
-    this.loadUserData();
+    await this.loadUserData();
     this.bus.emit(Events.AUTH_CHANGED, { user });
     return { ok: true };
   }
 
   async register(name, email, pass, options = {}) {
+    if (this.cloudMode) {
+      const r = await supabaseAuthRepo.signUp(name, email, pass, options);
+      if (!r.ok) return r;
+      if (r.needsEmailConfirmation) return { ok: true, msg: r.msg, needsEmailConfirmation: true };
+      this.currentUserId = r.user.id;
+      this._sessionUser = r.user;
+      this.workspaceId = r.workspaceId;
+      sessionStore.setString(STORAGE_KEYS.SESSION, String(r.user.id));
+      if (r.workspaceId) sessionStore.setString(STORAGE_KEYS.WORKSPACE, r.workspaceId);
+      await this.#maybeMigrateLocalData(r.user);
+      await this.loadUserData();
+      this.users = [r.user];
+      this.bus.emit(Events.AUTH_CHANGED, { user: r.user });
+      return { ok: true, user: r.user, autoLogin: true };
+    }
+
     const { role = 'user', profileType = PROFILE.PF, company = null } = options;
     if (usersRepo.findByEmail(email, this.users)) {
       return { ok: false, msg: 'Email já cadastrado' };
@@ -116,22 +265,40 @@ export class AppStore {
     return { ok: true, user: u };
   }
 
-  updateUserProfile(updates) {
+  async updateUserProfile(updates) {
     const u = this.currentUser();
     if (!u) return;
     Object.assign(u, updates);
-    usersRepo.save(this.users);
+
+    if (this.cloudMode && this.workspaceId) {
+      try {
+        await supabaseAuthRepo.updateWorkspaceProfile(this.workspaceId, this.currentUserId, u);
+      } catch (err) {
+        console.error('[nexus] Erro ao salvar perfil:', err.message);
+      }
+    } else {
+      usersRepo.save(this.users);
+    }
+
     this.bus.emit(Events.AUTH_CHANGED, { user: u });
   }
 
-  logout() {
+  async logout() {
+    if (this.cloudMode) await supabaseAuthRepo.signOut();
     sessionStore.remove(STORAGE_KEYS.SESSION);
+    sessionStore.remove(STORAGE_KEYS.WORKSPACE);
     this.currentUserId = null;
     this.currentUserData = null;
+    this.workspaceId = null;
+    this._sessionUser = null;
     this.bus.emit(Events.AUTH_CHANGED, { user: null });
   }
 
   deleteUser(id) {
+    if (this.cloudMode) {
+      console.warn('[nexus] Remoção de membros via UI ainda não disponível no modo cloud');
+      return;
+    }
     this.users = this.users.filter(u => u.id !== id);
     usersRepo.save(this.users);
     if (id === this.currentUserId) this.logout();
@@ -142,4 +309,27 @@ export class AppStore {
     fn(this.currentUserData);
     this.saveUserData();
   }
+
+  bindCloudAuthListener() {
+    if (!this.cloudMode) return;
+    supabaseAuthRepo.onAuthStateChange(async (session) => {
+      if (session?.user && session.user.id !== this.currentUserId) {
+        await this.#applyCloudSession(session.user.id);
+      } else if (!session && this.currentUserId) {
+        this.currentUserId = null;
+        this.currentUserData = null;
+        this.workspaceId = null;
+        this._sessionUser = null;
+        sessionStore.remove(STORAGE_KEYS.SESSION);
+        sessionStore.remove(STORAGE_KEYS.WORKSPACE);
+        this.bus.emit(Events.AUTH_CHANGED, { user: null });
+      }
+    });
+  }
+}
+
+function parseSessionId(raw) {
+  const n = Number(raw);
+  if (!Number.isNaN(n) && String(n) === raw) return n;
+  return raw;
 }

@@ -42,9 +42,10 @@ export function initHealthModule(store, charts) {
 
     const today = new Date().toISOString().split('T')[0];
     const record = store.currentUserData.healthHistory.find(h => h.date === today);
+    const prevScore = record?.score;
     if (record) record.score = health.score;
     else store.currentUserData.healthHistory.push({ date: today, score: health.score });
-    store.saveUserData({ silent: true });
+    if (prevScore !== health.score) store.saveUserData({ silent: true });
 
     return health;
   }

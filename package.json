@@ -16,6 +16,7 @@
     "test:all": "npm test && npm run test:e2e"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.4",
     "javascript-obfuscator": "^5.4.2"
   },
   "devDependencies": {

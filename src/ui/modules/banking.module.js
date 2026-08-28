@@ -1,4 +1,4 @@
-import { uid, toggleForm, fmtMoney, escapeHtml, currentMonthKey } from '../../core/utils.js';
+import { uid, toggleForm, fmtMoney, escapeHtml, currentMonthKey, parseId } from '../../core/utils.js';
 import { CHARGE_TYPES } from '../../core/constants.js';
 import { isBusiness } from '../../domain/profile.service.js';
 
@@ -135,7 +135,7 @@ export function initBankingModule(store, auth, router) {
   accountsBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('bank-acc-del')) return;
     if (!confirm('Remover esta conta e todos os lançamentos vinculados?')) return;
-    const id = Number(e.target.dataset.id);
+    const id = parseId(e.target.dataset.id);
     store.mutate(data => {
       data.accounts = data.accounts.filter(a => a.id !== id);
       data.txs = data.txs.filter(t => t.accountId !== id);
@@ -171,7 +171,7 @@ export function initBankingModule(store, auth, router) {
 
   cardsBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('bank-card-del')) return;
-    const id = Number(e.target.dataset.id);
+    const id = parseId(e.target.dataset.id);
     store.mutate(data => {
       data.cards = data.cards.filter(c => c.id !== id);
       data.charges = data.charges.filter(ch => ch.cardId !== id);
@@ -189,8 +189,9 @@ export function initBankingModule(store, auth, router) {
 
   chargeForm?.addEventListener('submit', e => {
     e.preventDefault();
+    if (!auth.requireAuth()) return;
     const f = new FormData(chargeForm);
-    const cardId = Number(f.get('cardId'));
+    const cardId = parseId(f.get('cardId'));
     if (!cardId) return alert('Selecione um cartão.');
     store.mutate(data => {
       data.charges.push({

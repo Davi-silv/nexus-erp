@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const SYSTEM_CHROME = process.env.PLAYWRIGHT_CHROME_PATH || '/usr/bin/google-chrome-stable';
+const chromePath = process.env.PLAYWRIGHT_CHROME_PATH
+  || (process.env.CI ? null : '/usr/bin/google-chrome-stable');
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -14,10 +15,12 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:8081',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    launchOptions: {
-      executablePath: SYSTEM_CHROME,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    }
+    ...(chromePath ? {
+      launchOptions: {
+        executablePath: chromePath,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      }
+    } : {})
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
@@ -25,7 +28,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run dev -- --host 127.0.0.1 --port 8081 --strictPort',
     url: 'http://127.0.0.1:8081',
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 120_000
   }
 });

@@ -1,4 +1,4 @@
-import { uid, toggleForm, fmtMoney, escapeHtml } from '../../core/utils.js';
+import { uid, toggleForm, fmtMoney, escapeHtml, parseId } from '../../core/utils.js';
 import { generateRecurringTransactions } from '../../domain/recurring.service.js';
 import { renderAccountSelect } from '../chart-registry.js';
 
@@ -48,7 +48,7 @@ export function initRecurringModule(store) {
         type: f.get('type'),
         amount: parseFloat(f.get('amount')) || 0,
         frequency: f.get('frequency'),
-        accountId: Number(f.get('accountId')),
+        accountId: parseId(f.get('accountId')),
         startDate: f.get('startDate'),
         nextOccurrence: f.get('startDate'),
         active: true
@@ -62,7 +62,7 @@ export function initRecurringModule(store) {
   recurringBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('rec-del')) return;
     store.mutate(data => {
-      data.recurring = data.recurring.filter(r => r.id !== Number(e.target.dataset.id));
+      data.recurring = data.recurring.filter(r => r.id !== parseId(e.target.dataset.id));
     });
     renderRecurring();
   });

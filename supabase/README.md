@@ -144,6 +144,51 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...   # apenas backend/Edge Functions
 VITE_APP_ENV=production
 ```
 
+Copie `.env.example` → `.env.local` e preencha as chaves Supabase. **Sem essas variáveis**, o app continua em modo localStorage (ideal para testes e demo offline).
+
+---
+
+## Integração frontend (modo dual)
+
+O frontend detecta automaticamente o Supabase via `VITE_SUPABASE_*`:
+
+| Arquivo | Função |
+|---------|--------|
+| `src/config/supabase.config.js` | Feature flag `isSupabaseEnabled` |
+| `src/infrastructure/supabase.client.js` | Cliente `@supabase/supabase-js` |
+| `src/infrastructure/supabase/data-mapper.js` | Mapeamento v2 ↔ PostgreSQL |
+| `src/repositories/supabase/auth.repository.js` | Login, cadastro, workspace |
+| `src/repositories/supabase/user-data.repository.js` | Sync contas, txs, cartões… |
+| `src/services/migration.service.js` | Migração automática localStorage → cloud |
+| `src/state/app-store.js` | Modo dual (local ou cloud) |
+
+### Fluxo
+
+1. Aplicar migrations `001`–`014` no projeto Supabase
+2. Configurar `.env.local` com URL + anon key
+3. `npm run dev` — cadastro/login usa Supabase Auth
+4. Na primeira sessão cloud, dados locais existentes são migrados automaticamente
+
+### Campos PJ em JSON (sem migration extra)
+
+Campos extras do v2 são serializados em colunas texto existentes:
+
+- Contas: `institution` → `{ bank, agency, accountNumber }`
+- Lançamentos: `notes` → `{ docNumber, counterparty }`
+- Centros de custo: `description` → `{ code, budget, text }`
+
+### Limitações conhecidas
+
+- Convite de membros ao workspace (multi-usuário cloud) — em breve
+- Chaves de IA ainda no localStorage — migrar para proxy backend
+- Modo local continua disponível sem variáveis Supabase (testes E2E)
+
+### Cadastro
+
+- PF → `workspaces.type = 'personal'`
+- PJ → `workspaces.type = 'business'` ou `'mei'`
+- Categorias padrão inseridas via RPC pós-registro
+
 ---
 
 ## Como aplicar

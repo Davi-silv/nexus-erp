@@ -1,4 +1,4 @@
-import { uid, toggleForm, fmtMoney, escapeHtml } from '../../core/utils.js';
+import { uid, toggleForm, fmtMoney, escapeHtml, parseId } from '../../core/utils.js';
 import { computeBalance, sumByType } from '../../domain/finance.service.js';
 import { isBusiness } from '../../domain/profile.service.js';
 import { populateCostCenterSelect } from './company.module.js';
@@ -98,11 +98,11 @@ export function initTransactionsModule(store, auth, accounts) {
     const desc = f.get('desc')?.trim();
     const type = f.get('type');
     const amount = parseFloat(f.get('amount')) || 0;
-    const accId = Number(f.get('account')) || null;
-    const categoryId = f.get('category') ? Number(f.get('category')) : undefined;
+    const accId = parseId(f.get('account')) || null;
+    const categoryId = f.get('category') ? parseId(f.get('category')) : undefined;
     const counterparty = f.get('counterparty')?.trim() || undefined;
     const docNumber = f.get('docNumber')?.trim() || undefined;
-    const costCenterId = f.get('costCenter') ? Number(f.get('costCenter')) : undefined;
+    const costCenterId = f.get('costCenter') ? parseId(f.get('costCenter')) : undefined;
     if (!date || !desc || amount <= 0 || !accId) {
       return alert('Preencha todos os campos e selecione a conta.');
     }
@@ -149,7 +149,7 @@ export function initTransactionsModule(store, auth, accounts) {
   txBodyMain?.addEventListener('click', e => {
     if (!e.target.classList.contains('tx-del')) return;
     store.mutate(data => {
-      data.txs = data.txs.filter(t => t.id !== Number(e.target.dataset.id));
+      data.txs = data.txs.filter(t => t.id !== parseId(e.target.dataset.id));
     });
   });
 

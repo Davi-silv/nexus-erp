@@ -1,7 +1,8 @@
 /**
  * Configuração central do produto — ponto único para branding e feature flags.
- * Altere aqui ao preparar white-label ou multi-tenant.
  */
+import { isSupabaseEnabled } from './supabase.config.js';
+
 export const APP_CONFIG = {
   name: 'Nexus ERP',
   shortName: 'Nexus',
@@ -19,8 +20,8 @@ export const APP_CONFIG = {
     pwaInstall: true,
     multiUser: true,
     exportCsv: true,
-    /** Requer backend SaaS */
-    cloudSync: false,
+    /** Supabase ativo quando VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY estão definidos */
+    cloudSync: isSupabaseEnabled,
     billing: false,
     openBanking: false,
     nfIntegration: false,

@@ -16,6 +16,12 @@ if [ -z "$CHROME" ]; then
   done
 fi
 
+if [ -z "$CHROME" ] && [ -n "${CI:-}" ]; then
+  echo "CI: usando Chromium bundled do Playwright"
+  unset PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
+  exec npx playwright test "$@"
+fi
+
 if [ -z "$CHROME" ]; then
   echo "Erro: nenhum navegador Chrome/Chromium encontrado no sistema."
   echo "Instale Google Chrome ou defina PLAYWRIGHT_CHROME_PATH=/caminho/do/chrome"

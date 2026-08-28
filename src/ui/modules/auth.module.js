@@ -59,7 +59,12 @@ export function initAuthModule(store, router) {
 
     const r = await store.register(f.get('name'), f.get('email'), f.get('password'), options);
     if (!r.ok) alert(r.msg);
-    else {
+    else if (r.needsEmailConfirmation) {
+      alert(r.msg || 'Verifique seu e-mail para confirmar o cadastro.');
+      registerForm.reset();
+    } else if (r.autoLogin) {
+      router.navigate(VIEWS.DASHBOARD);
+    } else {
       alert('Cadastro realizado com sucesso. Faça login.');
       registerForm.reset();
       router.navigate(VIEWS.AUTH);

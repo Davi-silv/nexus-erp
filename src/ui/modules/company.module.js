@@ -1,7 +1,6 @@
-import { uid, toggleForm, fmtMoney, escapeHtml } from '../../core/utils.js';
+import { uid, toggleForm, fmtMoney, escapeHtml, downloadCsv, parseId } from '../../core/utils.js';
 import { formatCNPJ, calculateDRE, isBusiness } from '../../domain/profile.service.js';
 import { buildDRECsv } from '../../domain/export.service.js';
-import { downloadCsv } from '../../core/utils.js';
 
 export function initCompanyModule(store, auth) {
   const form = document.getElementById('company-form');
@@ -63,11 +62,11 @@ export function initCompanyModule(store, auth) {
     if (company) company.innerHTML = html;
   }
 
-  form?.addEventListener('submit', e => {
+  form?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!auth.requireAuth()) return;
     const f = new FormData(form);
-    store.updateUserProfile({
+    await store.updateUserProfile({
       company: {
         legalName: f.get('legalName'),
         tradeName: f.get('tradeName'),
@@ -112,7 +111,7 @@ export function initCompanyModule(store, auth) {
   costCentersBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('cc-del')) return;
     store.mutate(data => {
-      data.costCenters = (data.costCenters || []).filter(c => c.id !== Number(e.target.dataset.id));
+      data.costCenters = (data.costCenters || []).filter(c => c.id !== parseId(e.target.dataset.id));
     });
     renderCostCenters();
   });

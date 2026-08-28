@@ -1,4 +1,4 @@
-import { uid, toggleForm, fmtMoney, escapeHtml, currentMonthKey } from '../../core/utils.js';
+import { uid, toggleForm, fmtMoney, escapeHtml, currentMonthKey, parseId } from '../../core/utils.js';
 import { CHARGE_TYPES } from '../../core/constants.js';
 
 export function initCardsModule(store, auth, charts) {
@@ -101,7 +101,7 @@ export function initCardsModule(store, auth, charts) {
 
   cardsBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('card-del')) return;
-    const id = Number(e.target.dataset.id);
+    const id = parseId(e.target.dataset.id);
     store.mutate(data => {
       data.cards = data.cards.filter(c => c.id !== id);
       data.charges = data.charges.filter(ch => ch.cardId !== id);
@@ -126,7 +126,7 @@ export function initCardsModule(store, auth, charts) {
     e.preventDefault();
     if (!auth.requireAuth()) return;
     const f = new FormData(chargeForm);
-    const cardId = Number(f.get('cardId')) || null;
+    const cardId = parseId(f.get('cardId')) || null;
     const date = f.get('date');
     const type = f.get('type');
     const desc = f.get('desc')?.trim();
@@ -145,7 +145,7 @@ export function initCardsModule(store, auth, charts) {
   chargesBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('charge-del')) return;
     store.mutate(data => {
-      data.charges = data.charges.filter(c => c.id !== Number(e.target.dataset.id));
+      data.charges = data.charges.filter(c => c.id !== parseId(e.target.dataset.id));
     });
     refresh();
   });

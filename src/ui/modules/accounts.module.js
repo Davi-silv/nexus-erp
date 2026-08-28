@@ -1,4 +1,4 @@
-import { uid, toggleForm, fmtMoney, escapeHtml } from '../../core/utils.js';
+import { uid, toggleForm, fmtMoney, escapeHtml, parseId } from '../../core/utils.js';
 import { renderAccountSelect } from '../chart-registry.js';
 import { isBusiness } from '../../domain/profile.service.js';
 import { renderBankAccountSelect } from './banking.module.js';
@@ -57,7 +57,7 @@ export function initAccountsModule(store, auth) {
 
   accountsBody?.addEventListener('click', e => {
     if (!e.target.classList.contains('acc-del')) return;
-    const id = Number(e.target.dataset.id);
+    const id = parseId(e.target.dataset.id);
     store.mutate(data => {
       data.accounts = data.accounts.filter(a => a.id !== id);
       data.txs = data.txs.filter(t => t.accountId !== id);
