@@ -2,8 +2,32 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
   <title>Nexus ERP</title>
+  <style id="nexus-mobile-critical">
+    /* Crítico: funciona antes do CSS externo e sem JavaScript */
+    @media (max-width: 1024px), (hover: none), (pointer: coarse), (display-mode: standalone) {
+      html .app { display: block !important; }
+      html .main { width: 100% !important; max-width: 100vw !important; flex: none !important; }
+      html .sidebar:not(.open) { display: none !important; }
+      html .btn-menu { display: flex !important; }
+      html .sidebar,
+      html .topbar,
+      html .sidebar-overlay { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+      html .sidebar.open {
+        display: flex !important;
+        flex-direction: column;
+        position: fixed !important;
+        inset: 0 auto 0 0;
+        z-index: 200;
+        width: min(85vw, 280px);
+        height: 100%;
+        height: 100dvh;
+        background: #0a0f1e;
+        overflow-y: auto;
+      }
+    }
+  </style>
   <meta name="description" content="Nexus ERP: painel financeiro moderno com relatórios, conciliação e gestão de contas.">
   <meta name="theme-color" content="#6366f1">
   <meta name="mobile-web-app-capable" content="yes">
@@ -17,11 +41,31 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>
     (function () {
+      var CACHE_VERSION = '4';
+      try {
+        if (localStorage.getItem('nexus-cache-v') !== CACHE_VERSION && 'serviceWorker' in navigator) {
+          localStorage.setItem('nexus-cache-v', CACHE_VERSION);
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            if (!regs.length) return;
+            Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
+              location.reload();
+            });
+          });
+        }
+      } catch (e) { /* ignore */ }
+
       function isMobileLayout() {
-        var w = window.innerWidth || document.documentElement.clientWidth || 9999;
+        var w = Math.min(
+          window.innerWidth || 9999,
+          document.documentElement.clientWidth || 9999,
+          window.screen && window.screen.width ? window.screen.width : 9999
+        );
+        var touch = 'ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
         var coarse = window.matchMedia('(pointer: coarse)').matches;
-        var standalone = window.matchMedia('(display-mode: standalone)').matches;
-        return w <= 820 || (coarse && w <= 1024) || (standalone && w <= 1024);
+        var noHover = window.matchMedia('(hover: none)').matches;
+        var standalone = window.matchMedia('(display-mode: standalone)').matches
+          || window.navigator.standalone === true;
+        return w <= 1024 || touch || coarse || noHover || standalone;
       }
       function applyMobileLayout() {
         document.documentElement.classList.toggle('mobile-layout', isMobileLayout());
@@ -30,6 +74,7 @@
       window.addEventListener('resize', applyMobileLayout);
       window.addEventListener('orientationchange', applyMobileLayout);
       window.__NEXUS_APPLY_MOBILE_LAYOUT__ = applyMobileLayout;
+      window.__NEXUS_IS_MOBILE__ = isMobileLayout;
     })();
   </script>
   <link rel="stylesheet" href="/css/styles.css">

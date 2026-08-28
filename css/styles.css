@@ -182,13 +182,20 @@ body::before {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: rgba(6, 10, 22, 0.88);
+  background: var(--bg-base);
   border-right: 1px solid var(--border);
-  backdrop-filter: blur(24px) saturate(1.4);
   position: sticky;
   top: 0;
   height: 100vh;
   overflow-y: auto;
+}
+
+@media (min-width: 1025px) {
+  .sidebar {
+    background: rgba(6, 10, 22, 0.88);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  }
 }
 
 .sidebar::-webkit-scrollbar { width: 4px; }

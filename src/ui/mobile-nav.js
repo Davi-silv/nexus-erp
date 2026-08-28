@@ -2,14 +2,32 @@
  * Navegação mobile — drawer lateral com overlay.
  */
 function isMobileLayout() {
-  const w = window.innerWidth || document.documentElement.clientWidth;
+  if (typeof window.__NEXUS_IS_MOBILE__ === 'function') {
+    return window.__NEXUS_IS_MOBILE__();
+  }
+  const w = Math.min(
+    window.innerWidth || 9999,
+    document.documentElement.clientWidth || 9999,
+    window.screen?.width || 9999
+  );
+  const touch = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0;
   const coarse = window.matchMedia('(pointer: coarse)').matches;
-  const standalone = window.matchMedia('(display-mode: standalone)').matches;
-  return w <= 820 || (coarse && w <= 1024) || (standalone && w <= 1024);
+  const noHover = window.matchMedia('(hover: none)').matches;
+  const standalone = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+  return w <= 1024 || touch || coarse || noHover || standalone;
 }
 
 function syncMobileLayoutClass() {
   document.documentElement.classList.toggle('mobile-layout', isMobileLayout());
+}
+
+function syncSidebarVisibility(sidebar, open) {
+  if (!isMobileLayout()) {
+    sidebar.style.removeProperty('display');
+    return;
+  }
+  sidebar.style.display = open ? 'flex' : 'none';
 }
 
 export function initMobileNav() {
@@ -29,6 +47,7 @@ export function initMobileNav() {
     overlay?.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded', 'false');
+    syncSidebarVisibility(sidebar, false);
   }
 
   function open() {
@@ -38,6 +57,7 @@ export function initMobileNav() {
     overlay?.setAttribute('aria-hidden', 'false');
     document.body.classList.add('nav-open');
     toggle.setAttribute('aria-expanded', 'true');
+    syncSidebarVisibility(sidebar, true);
   }
 
   toggle.addEventListener('click', () => {
