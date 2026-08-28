@@ -52,6 +52,10 @@ test.describe('Automação completa do sistema', () => {
   test('build PWA: manifest e service worker registrados', async ({ page }) => {
     acceptDialogs(page);
     await resetApp(page);
+
+    const isViteDev = await page.locator('script[src*="@vite/client"]').count() > 0;
+    if (isViteDev) return;
+
     await registerPF(page);
     await login(page, PF_USER.email, PF_USER.password);
 

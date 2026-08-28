@@ -48,6 +48,7 @@ export class Router {
     const target = document.getElementById(id);
     if (target) target.classList.add('active');
     this.navItems.forEach(n => n.classList.toggle('active', n.dataset.view === id));
+    document.body.dataset.view = id;
     if (this.pageTitleEl) {
       this.pageTitleEl.textContent = PAGE_TITLES[id] || 'Nexus ERP';
     }
