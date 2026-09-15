@@ -239,6 +239,20 @@ export class CommercialRepository {
     return data;
   }
 
+  async createReceivable(row) {
+    const { data, error } = await this.#requireClient()
+      .from('accounts_receivable')
+      .insert({
+        ...row,
+        status: 'pending',
+        received_amount: 0
+      })
+      .select('*, customers(name, document)')
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
   async listReceivables(workspaceId) {
     const { data, error } = await this.#requireClient()
       .from('accounts_receivable')

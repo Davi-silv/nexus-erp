@@ -22,7 +22,8 @@ export const FEATURES = {
   QUOTES: 'quotes',
   NFSE: 'nfse',
   PIX_CHARGES: 'pix_charges',
-  FISCAL_REPORTS: 'fiscal_reports'
+  FISCAL_REPORTS: 'fiscal_reports',
+  CRM: 'crm'
 };
 
 /** Mapeamento view → feature principal */
@@ -40,6 +41,7 @@ export const VIEW_FEATURES = {
   'contas-receber': FEATURES.ACCOUNTS_RECEIVABLE,
   'contas-pagar': FEATURES.ACCOUNTS_PAYABLE,
   'fluxo-caixa': FEATURES.CASH_PROJECTION,
+  crm: FEATURES.CRM,
   'config-fiscal': FEATURES.NFSE,
   nfse: FEATURES.NFSE,
   'notas-fiscais': FEATURES.NFSE
@@ -61,7 +63,8 @@ export const FEATURE_LABELS = {
   [FEATURES.ACCOUNTS_RECEIVABLE]: 'Contas a receber',
   [FEATURES.ACCOUNTS_PAYABLE]: 'Contas a pagar',
   [FEATURES.SUPPLIERS]: 'Fornecedores',
-  [FEATURES.CASH_PROJECTION]: 'Fluxo de caixa projetado'
+  [FEATURES.CASH_PROJECTION]: 'Fluxo de caixa projetado',
+  [FEATURES.CRM]: 'CRM e pipeline de vendas'
 };
 
 export const UPSELL_PLAN = {
@@ -79,7 +82,8 @@ export const UPSELL_PLAN = {
   [FEATURES.ACCOUNTS_RECEIVABLE]: 'start',
   [FEATURES.ACCOUNTS_PAYABLE]: 'start',
   [FEATURES.SUPPLIERS]: 'start',
-  [FEATURES.CASH_PROJECTION]: 'pro'
+  [FEATURES.CASH_PROJECTION]: 'pro',
+  [FEATURES.CRM]: 'start'
 };
 
 export const TRIAL_DAYS = 30;

@@ -17,6 +17,7 @@ const PAGE_TITLES = {
   empresa: 'Minha Empresa',
   bancos: 'Bancos & Cartões',
   clientes: 'Clientes',
+  crm: 'CRM',
   servicos: 'Serviços',
   orcamentos: 'Orçamentos',
   'contas-receber': 'Contas a Receber',

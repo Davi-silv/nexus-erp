@@ -131,6 +131,7 @@
           <ul>
             <li><button type="button" class="nav-item" data-view="servicos"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>Serviços</button></li>
             <li><button type="button" class="nav-item" data-view="clientes"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Clientes</button></li>
+            <li><button type="button" class="nav-item" data-view="crm"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>CRM</button></li>
           </ul>
         </div>
         <div class="nav-group">
@@ -1062,6 +1063,77 @@
           </div>
         </section>
 
+        <section id="crm" class="view">
+          <div class="page-header">
+            <div>
+              <h2>CRM</h2>
+              <p class="page-header__desc">Pipeline de vendas — do primeiro contato ao fechamento.</p>
+            </div>
+            <button type="button" id="open-crm-opportunity" class="btn-primary">Nova oportunidade</button>
+          </div>
+          <div id="crm-summary" class="commercial-summary"></div>
+          <div class="crm-sources-wrap">
+            <span class="crm-sources-label">Principais origens:</span>
+            <div id="crm-sources" class="crm-sources"></div>
+          </div>
+          <div id="crm-kanban" class="crm-kanban"></div>
+          <div id="crm-detail-panel" class="panel crm-detail hidden">
+            <div class="crm-detail__header">
+              <h3>Oportunidade</h3>
+              <button type="button" id="close-crm-detail" class="btn-secondary">Fechar</button>
+            </div>
+            <form id="crm-opportunity-form" class="crm-opportunity-form">
+              <input name="title" placeholder="Nome da oportunidade" required>
+              <input name="companyName" placeholder="Empresa">
+              <select name="customerId"><option value="">— Cliente relacionado —</option></select>
+              <div class="crm-form__row">
+                <input name="phone" placeholder="Telefone">
+                <input name="whatsapp" placeholder="WhatsApp">
+              </div>
+              <input name="email" type="email" placeholder="E-mail">
+              <input name="ownerName" placeholder="Responsável">
+              <div class="crm-form__row">
+                <input name="estimatedValue" type="number" step="0.01" min="0" placeholder="Valor estimado (R$)" required>
+                <input name="probability" type="number" min="0" max="100" placeholder="Probabilidade %" value="10">
+              </div>
+              <select name="leadSource">
+                <option value="">— Origem do lead —</option>
+                <option value="website">Site</option>
+                <option value="referral">Indicação</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="instagram">Instagram</option>
+                <option value="google">Google</option>
+                <option value="event">Evento</option>
+                <option value="cold_call">Prospecção ativa</option>
+                <option value="other">Outro</option>
+              </select>
+              <input name="expectedCloseDate" type="date" aria-label="Previsão de fechamento">
+              <textarea name="notes" placeholder="Observações" rows="2"></textarea>
+              <div class="crm-form__row">
+                <input name="nextActivity" placeholder="Próxima atividade">
+                <input name="nextActivityAt" type="date" aria-label="Data da próxima atividade">
+              </div>
+              <button type="submit" class="btn-primary">Salvar oportunidade</button>
+            </form>
+            <div class="crm-history-section">
+              <h4>Histórico</h4>
+              <div id="crm-history" class="crm-history"></div>
+              <form id="crm-activity-form" class="crm-activity-form">
+                <input type="hidden" name="opportunityId">
+                <select name="activityType" required>
+                  <option value="call">Ligação</option>
+                  <option value="meeting">Reunião</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="email">E-mail</option>
+                  <option value="note">Observação</option>
+                </select>
+                <textarea name="description" placeholder="Detalhes da atividade" rows="2"></textarea>
+                <button type="submit" class="btn-secondary">Registrar atividade</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
         <section id="servicos" class="view">
           <div class="page-header">
             <h2>Serviços</h2>
@@ -1325,6 +1397,22 @@
         </section>
 
       </main>
+    </div>
+  </div>
+
+  <div id="crm-closed-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2>Oportunidade fechada!</h2>
+      <p id="crm-closed-hint">Deseja criar registros a partir desta oportunidade?</p>
+      <div class="crm-closed-options">
+        <label><input type="checkbox" id="crm-closed-customer" checked> Criar cliente</label>
+        <label><input type="checkbox" id="crm-closed-quote"> Criar orçamento</label>
+        <label><input type="checkbox" id="crm-closed-receivable"> Criar conta a receber</label>
+      </div>
+      <div class="modal-card__actions">
+        <button type="button" id="crm-closed-confirm" class="btn-primary">Confirmar</button>
+        <button type="button" id="crm-closed-skip" class="btn-secondary">Agora não</button>
+      </div>
     </div>
   </div>
 
