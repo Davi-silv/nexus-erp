@@ -128,6 +128,50 @@ export class ChartRegistry {
     });
   }
 
+  initCashflow() {
+    this.create('cashflow', 'chart-cashflow', {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Saldo projetado',
+          data: [],
+          borderColor: '#6366f1',
+          backgroundColor: 'rgba(99, 102, 241, 0.12)',
+          fill: true,
+          tension: 0.35,
+          pointRadius: 3,
+          pointBackgroundColor: '#818cf8'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            grid: { color: 'rgba(255,255,255,0.04)' },
+            ticks: {
+              color: '#64748b',
+              callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR')
+            }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#64748b', maxTicksLimit: 10 }
+          }
+        }
+      }
+    });
+  }
+
+  updateCashflow({ labels, balance }) {
+    this.update('cashflow', c => {
+      c.data.labels = labels;
+      c.data.datasets[0].data = balance;
+    });
+  }
+
   updateCards(charges, cards) {
     const typeMap = { annual_fee: 'Taxa Anual', interest: 'Juros', annuity: 'Anuidade', insurance: 'Seguro', other: 'Outro' };
     const typeData = {};

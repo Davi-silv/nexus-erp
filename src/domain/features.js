@@ -39,6 +39,7 @@ export const VIEW_FEATURES = {
   orcamentos: FEATURES.QUOTES,
   'contas-receber': FEATURES.ACCOUNTS_RECEIVABLE,
   'contas-pagar': FEATURES.ACCOUNTS_PAYABLE,
+  'fluxo-caixa': FEATURES.CASH_PROJECTION,
   'config-fiscal': FEATURES.NFSE,
   nfse: FEATURES.NFSE,
   'notas-fiscais': FEATURES.NFSE
@@ -59,7 +60,8 @@ export const FEATURE_LABELS = {
   [FEATURES.CUSTOMERS]: 'Clientes',
   [FEATURES.ACCOUNTS_RECEIVABLE]: 'Contas a receber',
   [FEATURES.ACCOUNTS_PAYABLE]: 'Contas a pagar',
-  [FEATURES.SUPPLIERS]: 'Fornecedores'
+  [FEATURES.SUPPLIERS]: 'Fornecedores',
+  [FEATURES.CASH_PROJECTION]: 'Fluxo de caixa projetado'
 };
 
 export const UPSELL_PLAN = {
@@ -76,7 +78,8 @@ export const UPSELL_PLAN = {
   [FEATURES.CUSTOMERS]: 'start',
   [FEATURES.ACCOUNTS_RECEIVABLE]: 'start',
   [FEATURES.ACCOUNTS_PAYABLE]: 'start',
-  [FEATURES.SUPPLIERS]: 'start'
+  [FEATURES.SUPPLIERS]: 'start',
+  [FEATURES.CASH_PROJECTION]: 'pro'
 };
 
 export const TRIAL_DAYS = 30;

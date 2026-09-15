@@ -27,6 +27,7 @@ import {
   initFiscalModule
 } from './ui/modules/commercial.module.js';
 import { initPayablesModule } from './ui/modules/payables.module.js';
+import { initCashflowModule } from './ui/modules/cashflow.module.js';
 import { initTrialBanner, initExpiredModal } from './ui/subscription-ui.js';
 import { subscriptionService } from './services/subscription.service.js';
 import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
@@ -74,9 +75,11 @@ async function bootstrap() {
   const quotes = initQuotesModule(store, auth, router, subscriptionService);
   const receivables = initReceivablesModule(store, auth, router, subscriptionService);
   const payables = initPayablesModule(store, auth, router, subscriptionService);
+  const cashflow = initCashflowModule(store, auth, router, subscriptionService, charts);
   const fiscal = initFiscalModule(store, auth, router, subscriptionService);
   router.onNavigate = async (viewId) => {
     if (viewId === 'planos' || viewId === 'assinatura') await billing.refresh();
+    if (viewId === 'fluxo-caixa') await cashflow.refresh();
     if (['clientes', 'servicos', 'orcamentos', 'contas-receber', 'contas-pagar', 'notas-fiscais', 'config-fiscal'].includes(viewId)) {
       await customers.refresh();
       await services.refresh();
@@ -115,6 +118,7 @@ async function bootstrap() {
     quotes.refresh();
     receivables.refresh();
     payables.refresh();
+    cashflow.refresh();
     fiscal.refresh();
     if (store.currentUser()?.profileType === 'pj') {
       company.refresh();
@@ -147,6 +151,7 @@ async function bootstrap() {
   charts.initCategories();
   charts.initHealth();
   charts.initCards();
+  charts.initCashflow();
 
   auth.refreshAuthUI();
   router.show(router.getInitialView(store.isAuthenticated()), false);

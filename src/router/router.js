@@ -21,6 +21,7 @@ const PAGE_TITLES = {
   orcamentos: 'Orçamentos',
   'contas-receber': 'Contas a Receber',
   'contas-pagar': 'Contas a Pagar',
+  'fluxo-caixa': 'Fluxo de Caixa',
   'config-fiscal': 'Configurações Fiscais',
   'notas-fiscais': 'Notas Fiscais',
   planos: 'Planos',
