@@ -45,7 +45,7 @@ export function initAuthModule(store, router) {
   registerForm?.addEventListener('submit', async e => {
     e.preventDefault();
     const f = new FormData(registerForm);
-    const profileType = f.get('profileType') || PROFILE.PF;
+    const profileType = f.get('profileType') || PROFILE.PJ;
     const options = { profileType };
 
     if (profileType === PROFILE.PJ) {

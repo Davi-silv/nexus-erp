@@ -9,6 +9,115 @@ export class CommercialRepository {
     return this.#client;
   }
 
+  async listSuppliers(workspaceId) {
+    const { data, error } = await this.#requireClient()
+      .from('suppliers')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .is('deleted_at', null)
+      .order('name');
+    if (error) throw error;
+    return data || [];
+  }
+
+  async upsertSupplier(row) {
+    const { data, error } = await this.#requireClient()
+      .from('suppliers')
+      .upsert(row)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async listPayables(workspaceId, { limit = 500, offset = 0 } = {}) {
+    const { data, error, count } = await this.#requireClient()
+      .from('accounts_payable')
+      .select('*, suppliers(name, document)', { count: 'exact' })
+      .eq('workspace_id', workspaceId)
+      .is('deleted_at', null)
+      .order('due_date', { ascending: true })
+      .range(offset, offset + limit - 1);
+    if (error) throw error;
+    return { rows: data || [], total: count ?? (data?.length || 0) };
+  }
+
+  async createPayable(row) {
+    const groupId = row.is_recurring ? crypto.randomUUID() : null;
+    const { data, error } = await this.#requireClient()
+      .from('accounts_payable')
+      .insert({
+        ...row,
+        recurrence_group_id: groupId,
+        status: 'pending',
+        paid_amount: 0
+      })
+      .select('*, suppliers(name, document)')
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async updatePayable(id, patch) {
+    const { data, error } = await this.#requireClient()
+      .from('accounts_payable')
+      .update(patch)
+      .eq('id', id)
+      .select('*, suppliers(name, document)')
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async softDeletePayable(id) {
+    const { error } = await this.#requireClient()
+      .from('accounts_payable')
+      .update({ deleted_at: new Date().toISOString(), status: 'cancelled' })
+      .eq('id', id);
+    if (error) throw error;
+  }
+
+  async markPayablePaid(payableId, amount, financialAccountId, paymentDate) {
+    const { data, error } = await this.#requireClient().rpc('mark_payable_paid', {
+      p_payable_id: payableId,
+      p_payment_amount: amount,
+      p_financial_account_id: financialAccountId,
+      p_payment_date: paymentDate || null
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async cancelPayable(payableId) {
+    const { error } = await this.#requireClient().rpc('cancel_payable', {
+      p_payable_id: payableId
+    });
+    if (error) throw error;
+  }
+
+  async uploadPayableAttachment(workspaceId, payableId, file) {
+    const client = this.#requireClient();
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `${workspaceId}/${payableId}/${Date.now()}_${safeName}`;
+    const { error: upErr } = await client.storage
+      .from('payable-attachments')
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw upErr;
+    await this.updatePayable(payableId, {
+      attachment_name: file.name,
+      attachment_path: path
+    });
+    return path;
+  }
+
+  async getPayableAttachmentUrl(path) {
+    const { data, error } = await this.#requireClient().storage
+      .from('payable-attachments')
+      .createSignedUrl(path, 3600);
+    if (error) throw error;
+    return data?.signedUrl;
+  }
+
   async listCustomers(workspaceId) {
     const { data, error } = await this.#requireClient()
       .from('customers')

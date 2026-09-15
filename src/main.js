@@ -26,6 +26,7 @@ import {
   initReceivablesModule,
   initFiscalModule
 } from './ui/modules/commercial.module.js';
+import { initPayablesModule } from './ui/modules/payables.module.js';
 import { initTrialBanner, initExpiredModal } from './ui/subscription-ui.js';
 import { subscriptionService } from './services/subscription.service.js';
 import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
@@ -72,14 +73,16 @@ async function bootstrap() {
   const services = initServicesModule(store, auth, router, subscriptionService);
   const quotes = initQuotesModule(store, auth, router, subscriptionService);
   const receivables = initReceivablesModule(store, auth, router, subscriptionService);
+  const payables = initPayablesModule(store, auth, router, subscriptionService);
   const fiscal = initFiscalModule(store, auth, router, subscriptionService);
   router.onNavigate = async (viewId) => {
     if (viewId === 'planos' || viewId === 'assinatura') await billing.refresh();
-    if (['clientes', 'servicos', 'orcamentos', 'contas-receber', 'notas-fiscais', 'config-fiscal'].includes(viewId)) {
+    if (['clientes', 'servicos', 'orcamentos', 'contas-receber', 'contas-pagar', 'notas-fiscais', 'config-fiscal'].includes(viewId)) {
       await customers.refresh();
       await services.refresh();
       await quotes.refresh();
       await receivables.refresh();
+      await payables.refresh();
       await fiscal.refresh();
     }
   };
@@ -111,6 +114,7 @@ async function bootstrap() {
     services.refresh();
     quotes.refresh();
     receivables.refresh();
+    payables.refresh();
     fiscal.refresh();
     if (store.currentUser()?.profileType === 'pj') {
       company.refresh();
@@ -151,6 +155,8 @@ async function bootstrap() {
   if (store.isAuthenticated()) await refreshAll();
 
   document.title = APP_CONFIG.name;
+  const tagline = document.querySelector('.brand__tagline');
+  if (tagline) tagline.textContent = APP_CONFIG.tagline;
   const footer = document.querySelector('.sidebar__footer strong');
   if (footer) footer.textContent = `${APP_CONFIG.name} v${APP_CONFIG.version}`;
 

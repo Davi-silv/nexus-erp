@@ -73,5 +73,5 @@ export function bindProfileTypeToggle() {
 
   pfBtn.addEventListener('click', () => select('pf'));
   pjBtn.addEventListener('click', () => select('pj'));
-  select('pf');
+  select('pj');
 }

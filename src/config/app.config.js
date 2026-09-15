@@ -6,7 +6,7 @@ import { isSupabaseEnabled } from './supabase.config.js';
 export const APP_CONFIG = {
   name: 'Nexus ERP',
   shortName: 'Nexus',
-  tagline: 'Finance ERP',
+  tagline: 'ERP para PMEs',
   version: '2.0.0',
   locale: 'pt-BR',
   currency: 'BRL',

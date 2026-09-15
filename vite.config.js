@@ -19,7 +19,7 @@ export default defineConfig({
       manifest: {
         name: 'Nexus ERP',
         short_name: 'Nexus',
-        description: 'Gestão financeira inteligente para PF e PME — contas, lançamentos, DRE e análise com IA.',
+        description: 'Gestão inteligente para pequenas empresas — financeiro, clientes, vendas, fiscal e IA em uma plataforma.',
         theme_color: '#6366f1',
         background_color: '#0f1117',
         display: 'standalone',

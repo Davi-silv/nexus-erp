@@ -6,7 +6,7 @@ export const COMMERCIAL_PLANS = [
   {
     slug: 'personal',
     name: 'Nexus Pessoal',
-    description: 'Controle financeiro pessoal completo',
+    description: 'Uso individual — controle financeiro simplificado',
     price_monthly: 19.9,
     currency: 'BRL',
     recommended: false,
@@ -15,7 +15,7 @@ export const COMMERCIAL_PLANS = [
   {
     slug: 'start',
     name: 'Nexus Start',
-    description: 'Autônomos e MEIs — fluxo de caixa e operacional',
+    description: 'MEIs e autônomos — financeiro e operacional',
     price_monthly: 49.9,
     currency: 'BRL',
     recommended: false,
@@ -24,7 +24,7 @@ export const COMMERCIAL_PLANS = [
   {
     slug: 'pro',
     name: 'Nexus Pro',
-    description: 'MEIs e pequenas empresas — gestão financeira completa',
+    description: 'PMEs prestadoras de serviço — ERP completo',
     price_monthly: 99.9,
     currency: 'BRL',
     recommended: true,
@@ -33,7 +33,7 @@ export const COMMERCIAL_PLANS = [
   {
     slug: 'business',
     name: 'Nexus Business',
-    description: 'Empresas em crescimento — escala e auditoria',
+    description: 'Empresas em crescimento — multi-usuário e auditoria',
     price_monthly: 179.9,
     currency: 'BRL',
     recommended: false,

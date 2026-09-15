@@ -34,7 +34,7 @@
       }
     }
   </style>
-  <meta name="description" content="Nexus ERP: painel financeiro moderno com relatórios, conciliação e gestão de contas.">
+  <meta name="description" content="Nexus ERP — Gestão inteligente para pequenas empresas. Financeiro, clientes, vendas, fiscal e IA em uma plataforma.">
   <meta name="theme-color" content="#6366f1">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -96,7 +96,7 @@
         </div>
         <div class="brand__text">
           <span class="brand__name">Nexus</span>
-          <span class="brand__tagline">Finance ERP</span>
+          <span class="brand__tagline">ERP para PMEs</span>
         </div>
         <button type="button" id="btn-sidebar-close" class="sidebar__close btn-menu" aria-label="Fechar menu">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -137,6 +137,7 @@
           <ul>
             <li><button type="button" class="nav-item" data-view="orcamentos"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>Orçamentos</button></li>
             <li><button type="button" class="nav-item" data-view="contas-receber"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Contas a Receber</button></li>
+            <li><button type="button" class="nav-item" data-view="contas-pagar"><span class="nav-item__icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M7 5h5.5a3.5 3.5 0 0 1 0 7H7a3.5 3.5 0 0 0 0 7h5.5"/></svg></span>Contas a Pagar</button></li>
           </ul>
         </div>
         <div class="nav-group">
@@ -162,7 +163,7 @@
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Instalar app
         </button>
-        <p>Powered by <strong>Nexus ERP v2</strong><br>Gestão financeira inteligente</p>
+        <p>Powered by <strong>Nexus ERP v2</strong><br>Gestão inteligente para PMEs</p>
       </div>
     </aside>
 
@@ -176,7 +177,7 @@
           </svg>
         </button>
         <div class="topbar__left">
-          <span class="topbar__eyebrow">Nexus ERP · <span id="profile-badge">Pessoa Física</span></span>
+          <span class="topbar__eyebrow">Nexus ERP · <span id="profile-badge">Empresa · PME</span></span>
           <h1 id="page-title">Dashboard</h1>
         </div>
         <div class="user">
@@ -216,14 +217,15 @@
               <div class="auth-hero__logo">
                 <img src="/logo-mark.svg" alt="Nexus ERP" width="64" height="64" class="brand__logo-img">
               </div>
-              <h2 id="auth-hero-title">Finanças pessoais e empresariais</h2>
-              <p id="auth-hero-desc">Para pessoa física ou PME: fluxo de caixa, metas, centros de custo, DRE e análise com IA.</p>
+              <h2 id="auth-hero-title">Gestão inteligente para pequenas empresas.</h2>
+              <p id="auth-hero-desc">Financeiro, clientes, vendas, fiscal e inteligência empresarial em uma única plataforma.</p>
               <ul class="auth-features">
-                <li>Pessoa Física — controle de gastos e metas</li>
-                <li>Empresa PME — centros de custo e DRE</li>
-                <li>Consultor IA integrado</li>
-                <li>Conciliação e exportação CSV</li>
+                <li>Financeiro — fluxo de caixa, DRE e conciliação</li>
+                <li>Comercial — clientes, orçamentos e contas a pagar/receber</li>
+                <li>Fiscal — notas fiscais e configuração integrada</li>
+                <li>Nexus IA — insights e recomendações para o negócio</li>
               </ul>
+              <p class="auth-trial-badge">Comece grátis por 30 dias</p>
             </div>
             <div class="auth-forms">
               <div>
@@ -236,15 +238,16 @@
               </div>
               <hr class="auth-divider">
               <div>
-                <h3 class="auth-tab-title">Criar nova conta</h3>
+                <h3 class="auth-tab-title">Comece grátis por 30 dias</h3>
+                <p class="auth-register-lead">Cadastre sua empresa em minutos — MEI, autônomo ou PME prestadora de serviços.</p>
                 <div class="profile-type-toggle">
-                  <button type="button" id="profile-pf" class="profile-type-btn active">👤 Pessoa Física</button>
-                  <button type="button" id="profile-pj" class="profile-type-btn">🏢 Empresa (PME)</button>
+                  <button type="button" id="profile-pj" class="profile-type-btn active">🏢 Empresa (PME)</button>
+                  <button type="button" id="profile-pf" class="profile-type-btn">👤 Pessoa Física</button>
                 </div>
                 <form id="register-form">
-                  <input type="hidden" name="profileType" id="register-profile-type" value="pf">
-                  <input type="text" name="name" placeholder="Nome completo" required>
-                  <div id="register-pj-fields" class="hidden">
+                  <input type="hidden" name="profileType" id="register-profile-type" value="pj">
+                  <input type="text" name="name" placeholder="Nome do responsável" required>
+                  <div id="register-pj-fields">
                     <input type="text" name="legalName" placeholder="Razão social">
                     <input type="text" name="tradeName" placeholder="Nome fantasia">
                     <input type="text" name="cnpj" placeholder="CNPJ (00.000.000/0001-00)" maxlength="18">
@@ -267,8 +270,8 @@
           <div class="panel overview-panel">
             <div class="panel-header">
               <div>
-                <h2 id="dashboard-title">Visão geral financeira</h2>
-                <p id="dashboard-desc">Monitore fluxos de caixa, desempenho de receita e despesas em um painel centralizado.</p>
+                <h2 id="dashboard-title">Visão geral do negócio</h2>
+                <p id="dashboard-desc">Monitore faturamento, despesas operacionais e fluxo de caixa da sua empresa em tempo real.</p>
               </div>
               <span class="status-chip">Painel de controle</span>
             </div>
@@ -1117,6 +1120,122 @@
           </div>
         </section>
 
+        <section id="contas-pagar" class="view">
+          <div class="page-header">
+            <h2>Contas a Pagar</h2>
+            <button type="button" id="open-add-payable" class="btn-primary">Nova conta</button>
+          </div>
+          <div id="payables-summary" class="commercial-summary"></div>
+          <div class="panel payables-filters">
+            <div class="payables-filters__row">
+              <input type="date" id="filter-payable-from" aria-label="Vencimento de">
+              <input type="date" id="filter-payable-to" aria-label="Vencimento até">
+              <select id="filter-payable-status" aria-label="Status">
+                <option value="">Todos status</option>
+                <option value="pending">Pendente</option>
+                <option value="overdue">Vencido</option>
+                <option value="partial">Parcial</option>
+                <option value="paid">Pago</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+              <select id="filter-payable-category" aria-label="Categoria"><option value="">Todas categorias</option></select>
+              <select id="filter-payable-supplier" aria-label="Fornecedor"><option value="">Todos fornecedores</option></select>
+              <select id="filter-payable-cost-center" aria-label="Centro de custo"><option value="">Todos centros</option></select>
+              <button type="button" id="apply-payable-filters" class="btn-secondary">Filtrar</button>
+              <button type="button" id="clear-payable-filters" class="btn-link">Limpar</button>
+            </div>
+          </div>
+          <form id="add-payable-form" class="panel hidden payables-form">
+            <h3>Nova conta a pagar</h3>
+            <input name="description" placeholder="Descrição" required>
+            <div class="payables-form__row">
+              <select name="supplierId" required><option value="">— Fornecedor —</option></select>
+              <button type="button" id="open-add-supplier-payable" class="btn-link">+ Fornecedor</button>
+            </div>
+            <select name="categoryId"><option value="">— Categoria —</option></select>
+            <select name="costCenterId"><option value="">— Centro de custo —</option></select>
+            <input name="amount" type="number" step="0.01" min="0" placeholder="Valor (R$)" required>
+            <div class="payables-form__row">
+              <input name="issueDate" type="date" placeholder="Emissão" aria-label="Data de emissão">
+              <input name="dueDate" type="date" required aria-label="Data de vencimento">
+            </div>
+            <select name="paymentMethod">
+              <option value="">— Forma de pagamento —</option>
+              <option value="pix">PIX</option>
+              <option value="boleto">Boleto</option>
+              <option value="transfer">Transferência</option>
+              <option value="cash">Dinheiro</option>
+              <option value="card">Cartão</option>
+              <option value="debit">Débito automático</option>
+              <option value="other">Outro</option>
+            </select>
+            <select name="financialAccountId"><option value="">— Conta bancária —</option></select>
+            <textarea name="notes" placeholder="Observações" rows="2"></textarea>
+            <label class="payables-form__file">Anexo / comprovante <input name="attachment" type="file" accept="image/*,application/pdf"></label>
+            <label class="payables-form__check"><input type="checkbox" name="isRecurring"> Recorrente</label>
+            <select name="recurrenceFrequency">
+              <option value="monthly">Mensal</option>
+              <option value="weekly">Semanal</option>
+              <option value="yearly">Anual</option>
+            </select>
+            <div class="payables-form__actions">
+              <button type="submit" class="btn-primary">Salvar</button>
+              <button type="button" id="cancel-add-payable" class="btn-secondary">Cancelar</button>
+            </div>
+          </form>
+          <form id="add-supplier-payable-form" class="panel hidden">
+            <h3>Novo fornecedor</h3>
+            <input name="name" placeholder="Nome / Razão social" required>
+            <input name="document" placeholder="CNPJ / CPF">
+            <input name="email" type="email" placeholder="E-mail">
+            <input name="phone" placeholder="Telefone">
+            <button type="submit" class="btn-primary">Salvar fornecedor</button>
+            <button type="button" id="cancel-add-supplier-payable" class="btn-secondary">Cancelar</button>
+          </form>
+          <form id="edit-payable-form" class="panel hidden payables-form">
+            <h3>Editar conta a pagar</h3>
+            <input name="description" placeholder="Descrição" required>
+            <select name="supplierId"><option value="">— Fornecedor —</option></select>
+            <select name="categoryId"><option value="">— Categoria —</option></select>
+            <select name="costCenterId"><option value="">— Centro de custo —</option></select>
+            <input name="amount" type="number" step="0.01" min="0" placeholder="Valor (R$)" required>
+            <div class="payables-form__row">
+              <input name="issueDate" type="date" aria-label="Data de emissão">
+              <input name="dueDate" type="date" required aria-label="Data de vencimento">
+            </div>
+            <select name="paymentMethod">
+              <option value="">— Forma de pagamento —</option>
+              <option value="pix">PIX</option>
+              <option value="boleto">Boleto</option>
+              <option value="transfer">Transferência</option>
+              <option value="cash">Dinheiro</option>
+              <option value="card">Cartão</option>
+              <option value="debit">Débito automático</option>
+              <option value="other">Outro</option>
+            </select>
+            <select name="financialAccountId"><option value="">— Conta bancária —</option></select>
+            <textarea name="notes" placeholder="Observações" rows="2"></textarea>
+            <label class="payables-form__file">Substituir comprovante <input name="attachment" type="file" accept="image/*,application/pdf"></label>
+            <label class="payables-form__check"><input type="checkbox" name="isRecurring"> Recorrente</label>
+            <select name="recurrenceFrequency">
+              <option value="monthly">Mensal</option>
+              <option value="weekly">Semanal</option>
+              <option value="yearly">Anual</option>
+            </select>
+            <div class="payables-form__actions">
+              <button type="submit" class="btn-primary">Atualizar</button>
+              <button type="button" id="cancel-edit-payable" class="btn-secondary">Cancelar</button>
+            </div>
+          </form>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Descrição</th><th>Fornecedor</th><th>Vencimento</th><th>Valor</th><th>Em aberto</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="payables-body"></tbody>
+            </table>
+          </div>
+          <div id="payables-pagination" class="payables-pagination"></div>
+        </section>
+
         <section id="notas-fiscais" class="view">
           <div class="page-header"><h2>Notas fiscais (NFS-e)</h2></div>
           <div id="fiscal-summary" class="commercial-summary"></div>
@@ -1166,6 +1285,21 @@
         </section>
 
       </main>
+    </div>
+  </div>
+
+  <div id="pay-payable-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2>Registrar pagamento</h2>
+      <form id="pay-payable-form">
+        <input name="amount" type="number" step="0.01" min="0.01" placeholder="Valor pago (R$)" required>
+        <select name="financialAccountId" required><option value="">— Conta bancária —</option></select>
+        <input name="paymentDate" type="date" aria-label="Data do pagamento">
+        <div class="modal-card__actions">
+          <button type="submit" class="btn-primary">Confirmar pagamento</button>
+          <button type="button" id="pay-payable-modal-close" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
     </div>
   </div>
 

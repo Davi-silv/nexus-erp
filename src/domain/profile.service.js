@@ -29,8 +29,8 @@ export function getLabels(profileType) {
       costCenter: 'Centro de custo',
       dashboardTitle: 'Visão geral do negócio',
       dashboardDesc: 'Monitore faturamento, despesas operacionais e fluxo de caixa da sua empresa em tempo real.',
-      authHero: 'Gestão financeira para PMEs',
-      authDesc: 'Fluxo de caixa, centros de custo, DRE simplificado e conciliação — feito para pequenas e médias empresas.',
+      authHero: 'Gestão inteligente para pequenas empresas.',
+      authDesc: 'Financeiro, clientes, vendas, fiscal e inteligência empresarial em uma única plataforma.',
       registerName: 'Razão social ou responsável',
       companySection: 'Dados da empresa'
     };
@@ -51,9 +51,9 @@ export function getLabels(profileType) {
     docNumber: 'Referência',
     costCenter: 'Centro de custo',
     dashboardTitle: 'Visão geral financeira',
-    dashboardDesc: 'Monitore receitas, despesas e metas pessoais em um painel centralizado.',
-    authHero: 'Controle total das suas finanças',
-    authDesc: 'Dashboard inteligente, metas, análise com IA e relatórios — ideal para finanças pessoais.',
+    dashboardDesc: 'Monitore receitas, despesas e metas em um painel centralizado.',
+    authHero: 'Controle financeiro pessoal',
+    authDesc: 'Dashboard, metas e análise com IA — perfil individual dentro do Nexus ERP.',
     registerName: 'Nome completo',
     companySection: 'Dados pessoais'
   };

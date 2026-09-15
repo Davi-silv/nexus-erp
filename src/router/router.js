@@ -20,6 +20,7 @@ const PAGE_TITLES = {
   servicos: 'Serviços',
   orcamentos: 'Orçamentos',
   'contas-receber': 'Contas a Receber',
+  'contas-pagar': 'Contas a Pagar',
   'config-fiscal': 'Configurações Fiscais',
   'notas-fiscais': 'Notas Fiscais',
   planos: 'Planos',

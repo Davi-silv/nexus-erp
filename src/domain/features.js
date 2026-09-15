@@ -38,6 +38,7 @@ export const VIEW_FEATURES = {
   servicos: FEATURES.SERVICES,
   orcamentos: FEATURES.QUOTES,
   'contas-receber': FEATURES.ACCOUNTS_RECEIVABLE,
+  'contas-pagar': FEATURES.ACCOUNTS_PAYABLE,
   'config-fiscal': FEATURES.NFSE,
   nfse: FEATURES.NFSE,
   'notas-fiscais': FEATURES.NFSE
@@ -56,7 +57,9 @@ export const FEATURE_LABELS = {
   [FEATURES.NFSE]: 'NFS-e',
   [FEATURES.PIX_CHARGES]: 'Cobrança PIX',
   [FEATURES.CUSTOMERS]: 'Clientes',
-  [FEATURES.ACCOUNTS_RECEIVABLE]: 'Contas a receber'
+  [FEATURES.ACCOUNTS_RECEIVABLE]: 'Contas a receber',
+  [FEATURES.ACCOUNTS_PAYABLE]: 'Contas a pagar',
+  [FEATURES.SUPPLIERS]: 'Fornecedores'
 };
 
 export const UPSELL_PLAN = {
@@ -71,7 +74,9 @@ export const UPSELL_PLAN = {
   [FEATURES.NFSE]: 'start',
   [FEATURES.PIX_CHARGES]: 'start',
   [FEATURES.CUSTOMERS]: 'start',
-  [FEATURES.ACCOUNTS_RECEIVABLE]: 'start'
+  [FEATURES.ACCOUNTS_RECEIVABLE]: 'start',
+  [FEATURES.ACCOUNTS_PAYABLE]: 'start',
+  [FEATURES.SUPPLIERS]: 'start'
 };
 
 export const TRIAL_DAYS = 30;
