@@ -70,9 +70,19 @@ export class CommercialRepository {
   }
 
   async softDeletePayable(id) {
+    const { data: row, error: fetchErr } = await this.#requireClient()
+      .from('accounts_payable')
+      .select('paid_amount, status')
+      .eq('id', id)
+      .single();
+    if (fetchErr) throw fetchErr;
+    if (row.status === 'paid' || Number(row.paid_amount || 0) > 0) {
+      throw new Error('Conta com pagamento registrado — cancele ou estorne antes de excluir.');
+    }
+    await this.cancelPayable(id);
     const { error } = await this.#requireClient()
       .from('accounts_payable')
-      .update({ deleted_at: new Date().toISOString(), status: 'cancelled' })
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (error) throw error;
   }

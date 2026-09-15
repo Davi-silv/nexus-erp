@@ -190,6 +190,7 @@ export function initPayablesModule(store, auth, router, subscription) {
       const remaining = Number(row.amount) - Number(row.paid_amount || 0);
       const canPay = ['pending', 'partial', 'overdue'].includes(eff);
       const canEdit = row.status !== 'paid' && row.status !== 'cancelled';
+      const canDelete = canEdit && Number(row.paid_amount || 0) === 0;
       return `
         <tr>
           <td>${escapeHtml(row.description)}</td>
@@ -203,7 +204,7 @@ export function initPayablesModule(store, auth, router, subscription) {
             ${canEdit ? `<button type="button" data-edit="${row.id}">Editar</button>` : ''}
             ${row.status !== 'paid' ? `<button type="button" data-cancel="${row.id}">Cancelar</button>` : ''}
             ${row.attachment_path ? `<button type="button" data-attach="${row.id}">Comprovante</button>` : ''}
-            ${canEdit ? `<button type="button" data-del="${row.id}">Excluir</button>` : ''}
+            ${canDelete ? `<button type="button" data-del="${row.id}">Excluir</button>` : ''}
           </td>
         </tr>
       `;
@@ -393,8 +394,12 @@ export function initPayablesModule(store, auth, router, subscription) {
 
     if (delId) {
       if (!confirm('Excluir esta conta a pagar? Esta ação não pode ser desfeita.')) return;
-      await commercialRepo.softDeletePayable(delId);
-      refresh();
+      try {
+        await commercialRepo.softDeletePayable(delId);
+        refresh();
+      } catch (err) {
+        alert(err.message || 'Erro ao excluir conta a pagar.');
+      }
       return;
     }
 
