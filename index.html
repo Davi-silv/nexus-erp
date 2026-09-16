@@ -47,7 +47,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>
     (function () {
-      var CACHE_VERSION = '9';
+      var CACHE_VERSION = '10';
       try {
         if (localStorage.getItem('nexus-cache-v') !== CACHE_VERSION && 'serviceWorker' in navigator) {
           localStorage.setItem('nexus-cache-v', CACHE_VERSION);
@@ -272,10 +272,10 @@
           <div class="panel overview-panel">
             <div class="panel-header">
               <div>
-                <h2 id="dashboard-title">Visão geral do negócio</h2>
-                <p id="dashboard-desc">Monitore faturamento, despesas operacionais e fluxo de caixa da sua empresa em tempo real.</p>
+                <h2 id="dashboard-title">Dashboard executivo</h2>
+                <p id="dashboard-desc">Visão consolidada de financeiro, comercial e fluxo de caixa — leitura rápida para decisões do dia.</p>
               </div>
-              <span class="status-chip">Painel de controle</span>
+              <span class="status-chip">Painel executivo</span>
             </div>
           </div>
 
@@ -288,28 +288,22 @@
             <button type="button" id="pj-banking-goto-dash">Cadastrar agora</button>
           </div>
 
-          <div class="cards">
-            <div class="metric-card metric-card--balance">
-              <div class="metric-card__icon">💰</div>
-              <div class="metric-card__body">
-                <span class="metric-card__label" id="label-balance">Saldo disponível</span>
-                <strong class="metric-card__value" id="saldo">R$ 0,00</strong>
+          <div class="exec-dashboard">
+            <section class="exec-section">
+              <h3 class="exec-section__title">Financeiro</h3>
+              <div id="exec-financial" class="exec-grid"></div>
+            </section>
+
+            <section class="exec-section exec-section--row">
+              <div class="exec-section__col">
+                <h3 class="exec-section__title">Comercial</h3>
+                <div id="exec-commercial" class="exec-grid exec-grid--compact"></div>
               </div>
-            </div>
-            <div class="metric-card metric-card--income">
-              <div class="metric-card__icon">📈</div>
-              <div class="metric-card__body">
-                <span class="metric-card__label" id="label-income">Receitas mensais</span>
-                <strong class="metric-card__value" id="dashboard-receitas">R$ 0,00</strong>
+              <div class="exec-section__col">
+                <h3 class="exec-section__title">Fluxo de caixa</h3>
+                <div id="exec-cashflow" class="exec-grid exec-grid--compact"></div>
               </div>
-            </div>
-            <div class="metric-card metric-card--expense">
-              <div class="metric-card__icon">📉</div>
-              <div class="metric-card__body">
-                <span class="metric-card__label" id="label-expense">Despesas mensais</span>
-                <strong class="metric-card__value" id="dashboard-despesas">R$ 0,00</strong>
-              </div>
-            </div>
+            </section>
           </div>
 
           <div class="panel">
@@ -353,16 +347,31 @@
             <div id="dre-summary"></div>
           </div>
 
-          <div class="panel charts">
+          <div class="panel charts exec-charts">
             <div class="chart-col">
-              <h3>Fluxo de ganhos x perdas</h3>
-              <p class="chart-description">Acompanhe a evolução mensal do caixa para identificar tendências e oportunidades.</p>
-              <canvas id="chart-monthly" height="140"></canvas>
+              <h3>Receitas x despesas</h3>
+              <p class="chart-description">Comparativo mensal dos últimos 6 meses.</p>
+              <canvas id="chart-exec-rev-exp" height="160"></canvas>
             </div>
             <div class="chart-col">
-              <h3>Resumo financeiro</h3>
-              <p class="chart-description">Compare ganhos e gastos em uma visão rápida e clara.</p>
-              <canvas id="chart-summary" height="140"></canvas>
+              <h3>Evolução do faturamento</h3>
+              <p class="chart-description">Tendência de receitas ao longo do tempo.</p>
+              <canvas id="chart-exec-revenue" height="160"></canvas>
+            </div>
+            <div class="chart-col">
+              <h3>Lucro mensal</h3>
+              <p class="chart-description">Resultado líquido mês a mês.</p>
+              <canvas id="chart-exec-profit" height="160"></canvas>
+            </div>
+            <div class="chart-col">
+              <h3>Contas a receber x pagar</h3>
+              <p class="chart-description">Posição atual de títulos em aberto.</p>
+              <canvas id="chart-exec-ar-ap" height="160"></canvas>
+            </div>
+            <div class="chart-col chart-col--wide">
+              <h3>Funil comercial</h3>
+              <p class="chart-description">Oportunidades abertas por etapa do pipeline.</p>
+              <canvas id="chart-exec-funnel" height="180"></canvas>
             </div>
           </div>
         </section>

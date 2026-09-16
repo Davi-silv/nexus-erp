@@ -23,7 +23,7 @@ test.describe('Automação completa do sistema', () => {
     await login(page, PF_USER.email, PF_USER.password);
     await addPFAccount(page, { name: 'PF Wallet', bank: 'C6', balance: 500 });
     await addTransaction(page, { desc: 'Pix recebido', amount: 200, type: 'credit', accountLabel: 'PF Wallet' });
-    await expect(page.locator('#saldo')).toContainText('200');
+    await expect(page.locator('#exec-financial')).toContainText('200');
     await page.locator('#btn-logout').click();
     await expect(page.locator('#auth.view.active')).toBeVisible();
 

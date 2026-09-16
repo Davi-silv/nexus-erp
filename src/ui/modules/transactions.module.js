@@ -1,15 +1,10 @@
 import { uid, toggleForm, fmtMoney, escapeHtml, parseId } from '../../core/utils.js';
-import { computeBalance, sumByType } from '../../domain/finance.service.js';
 import { isBusiness } from '../../domain/profile.service.js';
 import { populateCostCenterSelect } from './company.module.js';
 
 export function initTransactionsModule(store, auth, accounts) {
   const txBody = document.getElementById('tx-body');
   const txBodyMain = document.getElementById('tx-body-main');
-  const saldoEl = document.getElementById('saldo');
-  const receitasEl = document.getElementById('dashboard-receitas');
-  const despesasEl = document.getElementById('dashboard-despesas');
-
   const forms = [
     { open: 'open-add', form: 'add-tx-form', cancel: 'cancel-add' },
     { open: 'open-add-lancamento', form: 'add-tx-form-lancamentos', cancel: 'cancel-add-lancamento' }
@@ -33,18 +28,6 @@ export function initTransactionsModule(store, auth, accounts) {
         `<option value="${c.id}">${escapeHtml(c.name)}</option>`
       ).join('');
     select.value = current;
-  }
-
-  function renderDashboardMetrics() {
-    if (!store.currentUserData) return;
-    const txs = store.currentUserData.txs;
-    if (receitasEl) receitasEl.textContent = fmtMoney(sumByType(txs, 'credit'));
-    if (despesasEl) despesasEl.textContent = fmtMoney(sumByType(txs, 'debit'));
-  }
-
-  function updateSaldo() {
-    if (!store.currentUserData || !saldoEl) return;
-    saldoEl.textContent = fmtMoney(computeBalance(store.currentUserData.txs));
   }
 
   function renderRecentTransactions() {
@@ -158,9 +141,7 @@ export function initTransactionsModule(store, auth, accounts) {
     renderCostCenterOptions();
     renderRecentTransactions();
     renderTxs();
-    renderDashboardMetrics();
-    updateSaldo();
   }
 
-  return { renderRecentTransactions, renderTxs, renderDashboardMetrics, updateSaldo, renderCategoryOptionsForTx, refresh };
+  return { renderRecentTransactions, renderTxs, renderCategoryOptionsForTx, refresh };
 }

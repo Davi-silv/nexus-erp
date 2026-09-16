@@ -43,9 +43,9 @@ test.describe('Conta Pessoa Física (PF)', () => {
     });
 
     await navigateTo(page, 'dashboard');
-    await expect(page.locator('#saldo')).not.toHaveText('R$ 0,00');
-    await expect(page.locator('#dashboard-receitas')).toContainText('5000');
-    await expect(page.locator('#dashboard-despesas')).toContainText('350');
+    const financial = page.locator('#exec-financial');
+    await expect(financial).toContainText('5000');
+    await expect(financial).toContainText('350');
   });
 
   test('cadastra cartão pessoal', async ({ page }) => {

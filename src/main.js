@@ -9,6 +9,7 @@ import { ChartRegistry } from './ui/chart-registry.js';
 import { initAuthModule } from './ui/modules/auth.module.js';
 import { initAccountsModule } from './ui/modules/accounts.module.js';
 import { initTransactionsModule } from './ui/modules/transactions.module.js';
+import { initDashboardModule } from './ui/modules/dashboard.module.js';
 import { initCategoriesModule } from './ui/modules/categories.module.js';
 import { initRecurringModule } from './ui/modules/recurring.module.js';
 import { initHealthModule } from './ui/modules/health.module.js';
@@ -60,6 +61,7 @@ async function bootstrap() {
   const auth = initAuthModule(store, router);
   const accounts = initAccountsModule(store, auth, router, subscriptionService);
   const transactions = initTransactionsModule(store, auth, accounts);
+  const dashboard = initDashboardModule(store, charts);
   const categories = initCategoriesModule(store, charts);
   const recurring = initRecurringModule(store);
   const health = initHealthModule(store, charts);
@@ -105,6 +107,7 @@ async function bootstrap() {
     accounts.renderAccounts();
     accounts.renderAccountOptions();
     transactions.refresh();
+    await dashboard.refresh();
     users.renderUsers();
     categories.refresh();
     recurring.refresh();
@@ -129,9 +132,6 @@ async function bootstrap() {
       banking.refresh();
     }
 
-    if (store.currentUserData) {
-      charts.updateDashboard(store.currentUserData.txs);
-    }
   }
 
   bus.on(Events.AUTH_CHANGED, async ({ user }) => {
@@ -151,7 +151,7 @@ async function bootstrap() {
 
   bus.on(Events.DATA_CHANGED, refreshAll);
 
-  charts.initDashboard();
+  charts.initExecutive();
   charts.initCategories();
   charts.initHealth();
   charts.initCards();

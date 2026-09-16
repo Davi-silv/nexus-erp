@@ -1,5 +1,11 @@
 import { fmtMoney, escapeHtml } from '../core/utils.js';
-import { aggregateByMonth, sumByType } from '../domain/finance.service.js';
+import { buildExecutiveCharts } from '../domain/dashboard.service.js';
+
+const CHART_DEFAULTS = {
+  grid: { color: 'rgba(255,255,255,0.04)' },
+  tick: { color: '#64748b' },
+  legend: { color: '#94a3b8', usePointStyle: true }
+};
 
 /** Registro centralizado de instâncias Chart.js — evita variáveis globais espalhadas */
 export class ChartRegistry {
@@ -26,44 +32,153 @@ export class ChartRegistry {
     chart.update();
   }
 
-  initDashboard() {
-    this.create('monthly', 'chart-monthly', {
+  initExecutive() {
+    this.create('execRevExp', 'chart-exec-rev-exp', {
       type: 'bar',
       data: {
         labels: [],
         datasets: [
-          { label: 'Ganhos', data: [], backgroundColor: 'rgba(52, 211, 153, 0.85)', borderRadius: 8 },
-          { label: 'Perdas', data: [], backgroundColor: 'rgba(248, 113, 113, 0.85)', borderRadius: 8 }
+          { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.85)', borderRadius: 6 },
+          { label: 'Despesas', data: [], backgroundColor: 'rgba(248, 113, 113, 0.85)', borderRadius: 6 }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b' } },
-          x: { grid: { display: false }, ticks: { color: '#64748b' } }
+          y: { beginAtZero: true, grid: CHART_DEFAULTS.grid, ticks: CHART_DEFAULTS.tick },
+          x: { grid: { display: false }, ticks: CHART_DEFAULTS.tick }
         },
-        plugins: { legend: { labels: { color: '#94a3b8', usePointStyle: true } } }
+        plugins: { legend: { labels: CHART_DEFAULTS.legend } }
       }
     });
-    this.create('summary', 'chart-summary', {
-      type: 'doughnut',
-      data: { labels: ['Ganhos', 'Perdas'], datasets: [{ data: [0, 0], backgroundColor: ['rgba(52,211,153,0.9)', 'rgba(248,113,113,0.9)'], borderWidth: 0 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true, padding: 16 } } } }
+
+    this.create('execRevenue', 'chart-exec-revenue', {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Faturamento',
+          data: [],
+          borderColor: '#34d399',
+          backgroundColor: 'rgba(52, 211, 153, 0.12)',
+          fill: true,
+          tension: 0.35,
+          pointBackgroundColor: '#34d399'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: CHART_DEFAULTS.grid, ticks: CHART_DEFAULTS.tick },
+          x: { grid: { display: false }, ticks: CHART_DEFAULTS.tick }
+        }
+      }
+    });
+
+    this.create('execProfit', 'chart-exec-profit', {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Lucro',
+          data: [],
+          backgroundColor: ctx => {
+            const v = ctx.raw;
+            return v >= 0 ? 'rgba(99, 102, 241, 0.85)' : 'rgba(248, 113, 113, 0.85)';
+          },
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { grid: CHART_DEFAULTS.grid, ticks: CHART_DEFAULTS.tick },
+          x: { grid: { display: false }, ticks: CHART_DEFAULTS.tick }
+        }
+      }
+    });
+
+    this.create('execArAp', 'chart-exec-ar-ap', {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+          backgroundColor: ['rgba(52, 211, 153, 0.85)', 'rgba(248, 113, 113, 0.85)'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: CHART_DEFAULTS.grid, ticks: CHART_DEFAULTS.tick },
+          x: { grid: { display: false }, ticks: CHART_DEFAULTS.tick }
+        }
+      }
+    });
+
+    this.create('execFunnel', 'chart-exec-funnel', {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Oportunidades',
+          data: [],
+          backgroundColor: 'rgba(99, 102, 241, 0.75)',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, grid: CHART_DEFAULTS.grid, ticks: { ...CHART_DEFAULTS.tick, stepSize: 1 } },
+          y: { grid: { display: false }, ticks: CHART_DEFAULTS.tick }
+        }
+      }
     });
   }
 
-  updateDashboard(txs) {
-    const agg = aggregateByMonth(txs);
-    this.update('monthly', c => {
-      c.data.labels = agg.labels;
-      c.data.datasets[0].data = agg.credits;
-      c.data.datasets[1].data = agg.debits;
+  updateExecutive({ txs = [], receivables = [], payables = [], opportunities = [], stages = [] } = {}) {
+    const data = buildExecutiveCharts({ txs, receivables, payables, opportunities, stages });
+
+    this.update('execRevExp', c => {
+      c.data.labels = data.revExp.labels;
+      c.data.datasets[0].data = data.revExp.credits;
+      c.data.datasets[1].data = data.revExp.debits;
     });
-    this.update('summary', c => {
-      c.data.datasets[0].data = [sumByType(txs, 'credit'), sumByType(txs, 'debit')];
+    this.update('execRevenue', c => {
+      c.data.labels = data.revenueEvolution.labels;
+      c.data.datasets[0].data = data.revenueEvolution.values;
+    });
+    this.update('execProfit', c => {
+      c.data.labels = data.monthlyProfit.labels;
+      c.data.datasets[0].data = data.monthlyProfit.values;
+    });
+    this.update('execArAp', c => {
+      c.data.labels = data.arAp.labels;
+      c.data.datasets[0].data = data.arAp.values;
+    });
+    this.update('execFunnel', c => {
+      c.data.labels = data.funnel.labels.length ? data.funnel.labels : ['Sem etapas'];
+      c.data.datasets[0].data = data.funnel.counts.length ? data.funnel.counts : [0];
     });
   }
+
+  /** @deprecated use initExecutive */
+  initDashboard() { this.initExecutive(); }
+
+  /** @deprecated use updateExecutive via dashboard module */
+  updateDashboard(txs) { this.updateExecutive({ txs }); }
 
   initCategories() {
     this.create('categories', 'chart-categories', {

@@ -25,7 +25,7 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',
-        start_url: '/?src=pwa&v=9',
+        start_url: '/?src=pwa&v=10',
         id: '/',
         lang: 'pt-BR',
         categories: ['finance', 'business', 'productivity'],
