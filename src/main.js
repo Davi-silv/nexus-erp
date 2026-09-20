@@ -87,7 +87,7 @@ async function bootstrap() {
   const ai = initAIModule(store, auth, health);
   initReconcileModule(store, auth);
   initReportsModule(store, auth);
-  const users = initUsersModule(store, auth);
+  const users = initUsersModule(store, auth, router);
   const company = initCompanyModule(store, auth);
   const banking = initBankingModule(store, auth, router);
   const billing = initBillingModule(store, router, subscriptionService);
@@ -100,6 +100,10 @@ async function bootstrap() {
   const crm = initCrmModule(store, auth, router, subscriptionService);
   const fiscal = initFiscalModule(store, auth, router, subscriptionService);
   router.onNavigate = async (viewId) => {
+    if (viewId === 'usuarios') {
+      await users.reloadMembers?.();
+      users.renderUsers();
+    }
     if (viewId === 'planos' || viewId === 'assinatura') await billing.refresh();
     if (viewId === 'fluxo-caixa') await cashflow.refresh();
     if (viewId === 'crm') await crm.refresh();

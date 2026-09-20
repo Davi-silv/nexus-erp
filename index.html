@@ -1037,8 +1037,9 @@
 
             <form id="add-user-form" class="hidden">
               <input type="text" name="name" placeholder="Nome" required>
-              <input type="email" name="email" placeholder="Email" required>
-              <select name="role"><option value="admin">Admin</option><option value="user">Usuário</option></select>
+              <input type="email" name="email" placeholder="E-mail (conta já cadastrada no Nexus)" required>
+              <select name="role" id="user-invite-role"></select>
+              <p class="form-hint text-muted" id="user-invite-hint">No modo cloud, a pessoa precisa ter se cadastrado antes com este e-mail.</p>
               <button type="submit">Criar</button>
               <button type="button" id="cancel-add-user">Cancelar</button>
             </form>

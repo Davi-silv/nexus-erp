@@ -90,18 +90,15 @@ export class SupabaseAuthRepository {
   }
 
   async listWorkspaceMembers(workspaceId) {
-    const { data, error } = await this.#client
-      .from('company_users')
-      .select('role, user_id, profiles(id, full_name)')
-      .eq('company_id', workspaceId);
+    const { data, error } = await this.#client.rpc('list_company_members', {
+      p_company_id: workspaceId
+    });
     if (error) throw error;
-
-    const { data: { user: currentUser } } = await this.#client.auth.getUser();
-
-    return (data || []).map(row => ({
-      id: row.profiles?.id || row.user_id,
-      name: row.profiles?.full_name || 'Membro',
-      email: row.user_id === currentUser?.id ? (currentUser.email || '') : '',
+    const rows = Array.isArray(data) ? data : [];
+    return rows.map(row => ({
+      id: row.user_id,
+      name: row.name || 'Membro',
+      email: row.email || '',
       role: row.role === 'owner' || row.role === 'admin' ? 'admin' : 'user',
       companyRole: row.role
     }));

@@ -191,3 +191,26 @@ export function canAccessView(role, viewId) {
   if (!mod) return true;
   return can(role, mod, ACTIONS.VIEW);
 }
+
+/** Cargos que podem ser escolhidos em convite / edição (nunca owner) */
+export const ASSIGNABLE_MEMBER_ROLES = [
+  ROLES.ADMIN,
+  ROLES.FINANCEIRO,
+  ROLES.COMERCIAL,
+  ROLES.VENDEDOR,
+  ROLES.CONTADOR,
+  ROLES.VISUALIZADOR
+];
+
+export function assignableMemberRoles(actorRole) {
+  const actor = normalizeRole(actorRole);
+  if (actor === ROLES.OWNER) return [...ASSIGNABLE_MEMBER_ROLES];
+  if (actor === ROLES.ADMIN) {
+    return ASSIGNABLE_MEMBER_ROLES.filter(r => r !== ROLES.ADMIN);
+  }
+  return [];
+}
+
+export function canAssignMemberRole(actorRole, targetRole) {
+  return assignableMemberRoles(actorRole).includes(normalizeRole(targetRole));
+}

@@ -5,7 +5,8 @@ import {
   ACTIONS,
   can,
   canAccessView,
-  normalizeRole
+  normalizeRole,
+  assignableMemberRoles
 } from '../../src/domain/rbac.service.js';
 
 describe('rbac.service', () => {
@@ -35,5 +36,10 @@ describe('rbac.service', () => {
 
   it('normalizeRole mapeia legado manager → commercial', () => {
     expect(normalizeRole('manager')).toBe(ROLES.COMERCIAL);
+  });
+
+  it('assignableMemberRoles restringe admin', () => {
+    expect(assignableMemberRoles(ROLES.OWNER)).toContain(ROLES.ADMIN);
+    expect(assignableMemberRoles(ROLES.ADMIN)).not.toContain(ROLES.ADMIN);
   });
 });
