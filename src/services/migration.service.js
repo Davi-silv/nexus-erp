@@ -39,7 +39,7 @@ async function recordLegacyMap(client, workspaceId, idMap) {
     const entityType = key.slice(0, sep);
     const legacyId = key.slice(sep + 1);
     return {
-      workspace_id: workspaceId,
+      company_id: workspaceId,
       entity_type: entityType,
       legacy_id: String(legacyId),
       new_id: newId
@@ -48,7 +48,7 @@ async function recordLegacyMap(client, workspaceId, idMap) {
   if (!rows.length) return;
   const { error } = await client
     .from('legacy_migration_map')
-    .upsert(rows, { onConflict: 'workspace_id,entity_type,legacy_id' });
+    .upsert(rows, { onConflict: 'company_id,entity_type,legacy_id' });
   if (error) console.warn('[nexus] legacy_migration_map:', error.message);
 }
 

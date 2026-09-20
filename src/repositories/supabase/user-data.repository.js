@@ -38,15 +38,15 @@ export class SupabaseUserDataRepository {
       recurringRes,
       healthRes
     ] = await Promise.all([
-      this.#client.from('financial_accounts').select('*').eq('workspace_id', workspaceId).is('deleted_at', null),
-      this.#client.from('transactions').select('*').eq('workspace_id', workspaceId).is('deleted_at', null),
-      this.#client.from('categories').select('*').eq('workspace_id', workspaceId).is('deleted_at', null),
-      this.#client.from('category_budgets').select('*').eq('workspace_id', workspaceId).eq('active', true),
-      this.#client.from('cost_centers').select('*').eq('workspace_id', workspaceId).is('deleted_at', null),
-      this.#client.from('credit_cards').select('*').eq('workspace_id', workspaceId).is('deleted_at', null),
-      this.#client.from('credit_card_transactions').select('*').eq('workspace_id', workspaceId).is('deleted_at', null),
-      this.#client.from('recurring_transactions').select('*').eq('workspace_id', workspaceId).is('deleted_at', null),
-      this.#client.from('financial_health_scores').select('*').eq('workspace_id', workspaceId).order('calculated_at', { ascending: true })
+      this.#client.from('financial_accounts').select('*').eq('company_id', workspaceId).is('deleted_at', null),
+      this.#client.from('transactions').select('*').eq('company_id', workspaceId).is('deleted_at', null),
+      this.#client.from('categories').select('*').eq('company_id', workspaceId).is('deleted_at', null),
+      this.#client.from('category_budgets').select('*').eq('company_id', workspaceId).eq('active', true),
+      this.#client.from('cost_centers').select('*').eq('company_id', workspaceId).is('deleted_at', null),
+      this.#client.from('credit_cards').select('*').eq('company_id', workspaceId).is('deleted_at', null),
+      this.#client.from('credit_card_transactions').select('*').eq('company_id', workspaceId).is('deleted_at', null),
+      this.#client.from('recurring_transactions').select('*').eq('company_id', workspaceId).is('deleted_at', null),
+      this.#client.from('financial_health_scores').select('*').eq('company_id', workspaceId).order('calculated_at', { ascending: true })
     ]);
 
     for (const res of [accountsRes, txsRes, categoriesRes, goalsRes, costCentersRes, cardsRes, chargesRes, recurringRes, healthRes]) {
@@ -93,7 +93,7 @@ export class SupabaseUserDataRepository {
       if (error) throw error;
     }
 
-    let query = this.#client.from(table).select('id').eq('workspace_id', workspaceId);
+    let query = this.#client.from(table).select('id').eq('company_id', workspaceId);
     if (SOFT_DELETE_TABLES.has(table)) {
       query = query.is('deleted_at', null);
     } else if (table === 'category_budgets') {
@@ -129,7 +129,7 @@ export class SupabaseUserDataRepository {
     const { data: existing, error: fetchError } = await this.#client
       .from('transactions')
       .select('id')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null);
     if (fetchError) throw fetchError;
 
@@ -160,7 +160,7 @@ export class SupabaseUserDataRepository {
     const { data: existing, error: fetchError } = await this.#client
       .from('credit_card_transactions')
       .select('id')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null);
     if (fetchError) throw fetchError;
 
@@ -184,7 +184,7 @@ export class SupabaseUserDataRepository {
     const { data: existing } = await this.#client
       .from('financial_health_scores')
       .select('id')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .gte('calculated_at', `${day}T00:00:00.000Z`)
       .lte('calculated_at', `${day}T23:59:59.999Z`)
       .limit(1);

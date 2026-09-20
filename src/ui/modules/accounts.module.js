@@ -4,6 +4,7 @@ import { isBusiness } from '../../domain/profile.service.js';
 import { renderBankAccountSelect } from './banking.module.js';
 import { FEATURES } from '../../domain/features.js';
 import { guardMutation } from '../subscription-guards.js';
+import { MODULES, ACTIONS } from '../../domain/rbac.service.js';
 
 export function initAccountsModule(store, auth, router, subscription) {
   const accountsBody = document.getElementById('accounts-body');
@@ -41,7 +42,7 @@ export function initAccountsModule(store, auth, router, subscription) {
   accForm?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!auth.requireAuth()) return;
-    if (subscription && !(await guardMutation(store, subscription, FEATURES.FINANCIAL_ACCOUNTS, router))) return;
+    if (subscription && !(await guardMutation(store, subscription, FEATURES.FINANCIAL_ACCOUNTS, router, { module: MODULES.FINANCIAL, action: ACTIONS.CREATE }))) return;
     const f = new FormData(accForm);
     store.mutate(data => {
       data.accounts.push({

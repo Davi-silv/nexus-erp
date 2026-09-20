@@ -91,9 +91,9 @@ export class SupabaseAuthRepository {
 
   async listWorkspaceMembers(workspaceId) {
     const { data, error } = await this.#client
-      .from('workspace_members')
+      .from('company_users')
       .select('role, user_id, profiles(id, full_name)')
-      .eq('workspace_id', workspaceId);
+      .eq('company_id', workspaceId);
     if (error) throw error;
 
     const { data: { user: currentUser } } = await this.#client.auth.getUser();
@@ -102,7 +102,8 @@ export class SupabaseAuthRepository {
       id: row.profiles?.id || row.user_id,
       name: row.profiles?.full_name || 'Membro',
       email: row.user_id === currentUser?.id ? (currentUser.email || '') : '',
-      role: row.role === 'owner' || row.role === 'admin' ? 'admin' : 'user'
+      role: row.role === 'owner' || row.role === 'admin' ? 'admin' : 'user',
+      companyRole: row.role
     }));
   }
 
@@ -118,7 +119,7 @@ export class SupabaseAuthRepository {
     }
 
     if (Object.keys(wsPatch).length) {
-      const { error } = await this.#client.from('workspaces').update(wsPatch).eq('id', workspaceId);
+      const { error } = await this.#client.from('companies').update(wsPatch).eq('id', workspaceId);
       if (error) throw error;
     }
 
@@ -146,19 +147,21 @@ export class SupabaseAuthRepository {
       .maybeSingle();
 
     const { data: memberships, error } = await this.#client
-      .from('workspace_members')
-      .select('role, workspace_id, workspaces(id, name, type, document)')
+      .from('company_users')
+      .select('role, company_id, companies(id, name, type, document)')
       .eq('user_id', userId)
       .limit(1);
     if (error) throw error;
 
     const membership = memberships?.[0];
-    const workspace = membership?.workspaces;
+    const workspace = membership?.companies;
     const { data: { user: authUser } } = await this.#client.auth.getUser();
 
     return {
       user: buildUserFromSession(authUser || { id: userId, email: '' }, profile, workspace, membership?.role),
-      workspaceId: membership?.workspace_id || null,
+      workspaceId: membership?.company_id || null,
+      companyId: membership?.company_id || null,
+      companyRole: membership?.role || 'viewer',
       workspace
     };
   }
@@ -166,7 +169,7 @@ export class SupabaseAuthRepository {
   async #seedDefaultCategories(workspaceId, profileType) {
     const categories = getDefaultCategories(profileType).map(c => ({
       id: uid(),
-      workspace_id: workspaceId,
+      company_id: workspaceId,
       name: c.name,
       color: c.color,
       type: c.name.toLowerCase().includes('receita') || c.name.toLowerCase().includes('vendas') ? 'income' : 'expense',

@@ -1,7 +1,13 @@
 import { FEATURES } from '../domain/features.js';
+import { ACTIONS } from '../domain/rbac.service.js';
+import { guardModuleAction } from './rbac-guards.js';
 
 /** Verifica limite antes de mutate; retorna false se bloqueado */
-export async function guardMutation(store, subscription, feature, router) {
+export async function guardMutation(store, subscription, feature, router, rbac = null) {
+  if (rbac?.module) {
+    const action = rbac.action || ACTIONS.CREATE;
+    if (!guardModuleAction(store, rbac.module, action, router)) return false;
+  }
   if (!subscription.isCloudEnforced()) return true;
   if (!subscription.canWrite()) {
     alert('Seu teste gratuito terminou. Escolha um plano para continuar editando dados.');

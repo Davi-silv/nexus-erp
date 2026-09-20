@@ -4,6 +4,7 @@ import { crmRepo } from '../../repositories/supabase/crm.repository.js';
 import { commercialRepo } from '../../repositories/supabase/commercial.repository.js';
 import { FEATURES } from '../../domain/features.js';
 import { guardMutation } from '../subscription-guards.js';
+import { MODULES, ACTIONS } from '../../domain/rbac.service.js';
 import {
   calculateCrmMetrics,
   probabilityForStage,
@@ -175,7 +176,7 @@ export function initCrmModule(store, auth, router, subscription) {
     const stage = stages.find(s => s.id === stageId);
     if (!stage) return;
 
-    if (!(await guardMutation(store, subscription, FEATURES.CRM, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.CRM, router, { module: MODULES.CRM, action: ACTIONS.EDIT }))) return;
 
     await crmRepo.moveStage(oppId, stageId);
 
@@ -222,8 +223,7 @@ export function initCrmModule(store, auth, router, subscription) {
       if (existing) {
         customerId = existing.id;
       } else {
-        const created = await commercialRepo.upsertCustomer({
-          workspace_id: store.workspaceId,
+        const created = await commercialRepo.upsertCustomer(store.companyId, {
           name: opp.company_name || opp.title,
           person_type: 'company',
           email: opp.email || null,
@@ -253,8 +253,7 @@ export function initCrmModule(store, auth, router, subscription) {
 
     if (createAr) {
       const due = opp.expected_close_date || new Date().toISOString().slice(0, 10);
-      const ar = await commercialRepo.createReceivable({
-        workspace_id: store.workspaceId,
+      const ar = await commercialRepo.createReceivable(store.companyId, {
         customer_id: customerId,
         description: `CRM: ${opp.title}`,
         amount: Number(opp.estimated_value) || 0,
@@ -302,10 +301,10 @@ export function initCrmModule(store, auth, router, subscription) {
 
   oppForm?.addEventListener('submit', async e => {
     e.preventDefault();
-    if (!(await guardMutation(store, subscription, FEATURES.CRM, router))) return;
+    const oppAction = editingId ? ACTIONS.EDIT : ACTIONS.CREATE;
+    if (!(await guardMutation(store, subscription, FEATURES.CRM, router, { module: MODULES.CRM, action: oppAction }))) return;
     const f = new FormData(oppForm);
     const payload = {
-      workspace_id: store.workspaceId,
       title: f.get('title'),
       company_name: f.get('companyName') || null,
       customer_id: f.get('customerId') || null,
@@ -327,7 +326,7 @@ export function initCrmModule(store, auth, router, subscription) {
       await crmRepo.updateOpportunity(editingId, payload);
     } else {
       const firstStage = stages.find(s => s.slug === 'new_lead') || stages[0];
-      await crmRepo.createOpportunity({ ...payload, stage_id: firstStage?.id });
+      await crmRepo.createOpportunity(store.companyId, { ...payload, stage_id: firstStage?.id });
     }
     detailPanel?.classList.add('hidden');
     editingId = null;
@@ -339,11 +338,10 @@ export function initCrmModule(store, auth, router, subscription) {
     const f = new FormData(activityForm);
     const oppId = f.get('opportunityId') || editingId;
     if (!oppId) return;
-    if (!(await guardMutation(store, subscription, FEATURES.CRM, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.CRM, router, { module: MODULES.CRM, action: ACTIONS.CREATE }))) return;
     const type = f.get('activityType');
     const title = ACTIVITY_TYPES.find(t => t.value === type)?.label || 'Atividade';
-    await crmRepo.addActivity({
-      workspace_id: store.workspaceId,
+    await crmRepo.addActivity(store.companyId, {
       opportunity_id: oppId,
       activity_type: type,
       title,

@@ -1,5 +1,6 @@
 import { getSupabaseClient } from '../../infrastructure/supabase.client.js';
 import { isSupabaseEnabled } from '../../config/supabase.config.js';
+import { stripTenantFields, scopedRow } from '../../domain/tenant.js';
 
 export class CommercialRepository {
   #client = isSupabaseEnabled ? getSupabaseClient() : null;
@@ -13,17 +14,17 @@ export class CommercialRepository {
     const { data, error } = await this.#requireClient()
       .from('suppliers')
       .select('*')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null)
       .order('name');
     if (error) throw error;
     return data || [];
   }
 
-  async upsertSupplier(row) {
+  async upsertSupplier(companyId, row) {
     const { data, error } = await this.#requireClient()
       .from('suppliers')
-      .upsert(row)
+      .upsert(scopedRow(companyId, row))
       .select()
       .single();
     if (error) throw error;
@@ -34,7 +35,7 @@ export class CommercialRepository {
     const { data, error, count } = await this.#requireClient()
       .from('accounts_payable')
       .select('*, suppliers(name, document)', { count: 'exact' })
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null)
       .order('due_date', { ascending: true })
       .range(offset, offset + limit - 1);
@@ -42,12 +43,12 @@ export class CommercialRepository {
     return { rows: data || [], total: count ?? (data?.length || 0) };
   }
 
-  async createPayable(row) {
+  async createPayable(companyId, row) {
     const groupId = row.is_recurring ? crypto.randomUUID() : null;
     const { data, error } = await this.#requireClient()
       .from('accounts_payable')
       .insert({
-        ...row,
+        ...scopedRow(companyId, row),
         recurrence_group_id: groupId,
         status: 'pending',
         paid_amount: 0
@@ -61,7 +62,7 @@ export class CommercialRepository {
   async updatePayable(id, patch) {
     const { data, error } = await this.#requireClient()
       .from('accounts_payable')
-      .update(patch)
+      .update(stripTenantFields(patch))
       .eq('id', id)
       .select('*, suppliers(name, document)')
       .single();
@@ -132,17 +133,17 @@ export class CommercialRepository {
     const { data, error } = await this.#requireClient()
       .from('customers')
       .select('*')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null)
       .order('name');
     if (error) throw error;
     return data || [];
   }
 
-  async upsertCustomer(row) {
+  async upsertCustomer(companyId, row) {
     const { data, error } = await this.#requireClient()
       .from('customers')
-      .upsert(row)
+      .upsert(scopedRow(companyId, row))
       .select()
       .single();
     if (error) throw error;
@@ -153,17 +154,17 @@ export class CommercialRepository {
     const { data, error } = await this.#requireClient()
       .from('services')
       .select('*')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null)
       .order('name');
     if (error) throw error;
     return data || [];
   }
 
-  async upsertService(row) {
+  async upsertService(companyId, row) {
     const { data, error } = await this.#requireClient()
       .from('services')
-      .upsert(row)
+      .upsert(scopedRow(companyId, row))
       .select()
       .single();
     if (error) throw error;
@@ -182,7 +183,7 @@ export class CommercialRepository {
     const { data, error } = await this.#requireClient()
       .from('quotes')
       .select('*, customers(name, document)')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false });
     if (error) throw error;
@@ -205,17 +206,17 @@ export class CommercialRepository {
     });
     const { data, error } = await this.#requireClient()
       .from('quotes')
-      .insert({ ...payload, workspace_id: workspaceId, number: number })
+      .insert({ ...scopedRow(workspaceId, payload), number: number })
       .select()
       .single();
     if (error) throw error;
     return data;
   }
 
-  async addQuoteItem(item) {
+  async addQuoteItem(companyId, item) {
     const { data, error } = await this.#requireClient()
       .from('quote_items')
-      .insert(item)
+      .insert(scopedRow(companyId, item))
       .select()
       .single();
     if (error) throw error;
@@ -239,11 +240,11 @@ export class CommercialRepository {
     return data;
   }
 
-  async createReceivable(row) {
+  async createReceivable(companyId, row) {
     const { data, error } = await this.#requireClient()
       .from('accounts_receivable')
       .insert({
-        ...row,
+        ...scopedRow(companyId, row),
         status: 'pending',
         received_amount: 0
       })
@@ -257,7 +258,7 @@ export class CommercialRepository {
     const { data, error } = await this.#requireClient()
       .from('accounts_receivable')
       .select('*, customers(name, document, email)')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null)
       .order('due_date');
     if (error) throw error;
@@ -277,16 +278,16 @@ export class CommercialRepository {
     const { data, error } = await this.#requireClient()
       .from('fiscal_settings')
       .select('*')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .maybeSingle();
     if (error) throw error;
     return data;
   }
 
-  async upsertFiscalSettings(row) {
+  async upsertFiscalSettings(companyId, row) {
     const { data, error } = await this.#requireClient()
       .from('fiscal_settings')
-      .upsert(row, { onConflict: 'workspace_id' })
+      .upsert(scopedRow(companyId, row), { onConflict: 'company_id' })
       .select()
       .single();
     if (error) throw error;
@@ -297,7 +298,7 @@ export class CommercialRepository {
     const { data, error } = await this.#requireClient()
       .from('fiscal_invoices')
       .select('*, customers(name, document)')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
@@ -317,9 +318,9 @@ export class CommercialRepository {
   async getCommercialSummary(workspaceId) {
     const client = this.#requireClient();
     const [quotes, receivables, invoices] = await Promise.all([
-      client.from('quotes').select('status, total').eq('workspace_id', workspaceId).is('deleted_at', null),
-      client.from('accounts_receivable').select('status, amount, received_amount').eq('workspace_id', workspaceId).is('deleted_at', null),
-      client.from('fiscal_invoices').select('status, gross_amount, issued_at').eq('workspace_id', workspaceId)
+      client.from('quotes').select('status, total').eq('company_id', workspaceId).is('deleted_at', null),
+      client.from('accounts_receivable').select('status, amount, received_amount').eq('company_id', workspaceId).is('deleted_at', null),
+      client.from('fiscal_invoices').select('status, gross_amount, issued_at').eq('company_id', workspaceId)
     ]);
     if (quotes.error) throw quotes.error;
     if (receivables.error) throw receivables.error;

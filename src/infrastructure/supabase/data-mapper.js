@@ -69,6 +69,7 @@ export function buildUserFromSession(authUser, profile, workspace, memberRole) {
     name: profile?.full_name || meta.full_name || authUser.email?.split('@')[0] || 'Usuário',
     email: authUser.email,
     role: memberRole === 'owner' || memberRole === 'admin' ? 'admin' : 'user',
+    companyRole: memberRole || 'viewer',
     profileType,
     company
   };
@@ -106,7 +107,7 @@ export function mapAccountToDb(row, workspaceId, userId) {
   });
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     name: row.name,
     institution,
     type: ACCOUNT_TYPE_MAP[row.accountType] || 'checking',
@@ -141,7 +142,7 @@ export function mapTransactionToDb(row, workspaceId, userId) {
   });
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     financial_account_id: row.accountId,
     category_id: row.categoryId || null,
     cost_center_id: row.costCenterId || null,
@@ -167,7 +168,7 @@ export function mapCategoryFromDb(row) {
 export function mapCategoryToDb(row, workspaceId) {
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     name: row.name,
     color: row.color || '#94a3b8',
     type: row.type || (row.name?.toLowerCase().includes('receita') || row.name?.toLowerCase().includes('vendas') ? 'income' : 'expense'),
@@ -186,7 +187,7 @@ export function mapGoalFromDb(row) {
 export function mapGoalToDb(row, workspaceId) {
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     category_id: row.categoryId,
     monthly_limit: Number(row.limit),
     active: true
@@ -212,7 +213,7 @@ export function mapCostCenterToDb(row, workspaceId) {
   });
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     name: row.name,
     description,
     active: true
@@ -233,7 +234,7 @@ export function mapCardFromDb(row) {
 export function mapCardToDb(row, workspaceId, userId) {
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     name: row.name,
     institution: stringifyJsonField({ holder: row.holder, last4: row.last4, anniversary: row.anniversary }),
     limit_amount: 0,
@@ -265,7 +266,7 @@ function parseChargeMeta(row) {
 export function mapChargeToDb(row, workspaceId, userId) {
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     credit_card_id: row.cardId,
     description: `${row.type}::${row.desc}`,
     amount: Number(row.amount),
@@ -291,7 +292,7 @@ export function mapRecurringFromDb(row) {
 export function mapRecurringToDb(row, workspaceId, userId) {
   return {
     id: row.id,
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     financial_account_id: row.accountId,
     type: txTypeToV3(row.type),
     description: row.desc,
@@ -313,7 +314,7 @@ export function mapHealthFromDb(row) {
 
 export function mapHealthToDb(row, workspaceId) {
   return {
-    workspace_id: workspaceId,
+    company_id: workspaceId,
     score: row.score,
     calculated_at: `${row.date}T12:00:00.000Z`
   };

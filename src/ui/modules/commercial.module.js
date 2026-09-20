@@ -3,6 +3,7 @@ import { isSupabaseEnabled } from '../../config/supabase.config.js';
 import { commercialRepo } from '../../repositories/supabase/commercial.repository.js';
 import { FEATURES } from '../../domain/features.js';
 import { guardMutation } from '../subscription-guards.js';
+import { MODULES, ACTIONS } from '../../domain/rbac.service.js';
 import { openQuotePdf } from '../../services/quote-pdf.service.js';
 
 function cloudOnlyMsg() {
@@ -43,10 +44,9 @@ export function initCustomersModule(store, auth, router, subscription) {
   form?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!auth.requireAuth()) return;
-    if (!(await guardMutation(store, subscription, FEATURES.CUSTOMERS, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.CUSTOMERS, router, { module: MODULES.CUSTOMERS, action: ACTIONS.CREATE }))) return;
     const f = new FormData(form);
-    await commercialRepo.upsertCustomer({
-      workspace_id: store.workspaceId,
+    await commercialRepo.upsertCustomer(store.companyId, {
       name: f.get('name'),
       person_type: f.get('personType') || 'individual',
       document: f.get('document') || null,
@@ -100,10 +100,9 @@ export function initServicesModule(store, auth, router, subscription) {
   form?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!auth.requireAuth()) return;
-    if (!(await guardMutation(store, subscription, FEATURES.SERVICES, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.SERVICES, router, { module: MODULES.QUOTES, action: ACTIONS.CREATE }))) return;
     const f = new FormData(form);
-    await commercialRepo.upsertService({
-      workspace_id: store.workspaceId,
+    await commercialRepo.upsertService(store.companyId, {
       name: f.get('name'),
       description: f.get('description') || null,
       fiscal_description: f.get('fiscalDescription') || null,
@@ -187,6 +186,9 @@ export function initQuotesModule(store, auth, router, subscription) {
     const id = e.target.dataset.edit || e.target.dataset.pdf || e.target.dataset.send
       || e.target.dataset.approve || e.target.dataset.ar;
     if (!id) return;
+    if (e.target.dataset.send || e.target.dataset.approve || e.target.dataset.ar) {
+      if (!(await guardMutation(store, subscription, FEATURES.QUOTES, router, { module: MODULES.QUOTES, action: ACTIONS.EDIT }))) return;
+    }
     if (e.target.dataset.edit) {
       editingQuoteId = id;
       itemForm?.classList.remove('hidden');
@@ -231,7 +233,7 @@ export function initQuotesModule(store, auth, router, subscription) {
 
   form?.addEventListener('submit', async e => {
     e.preventDefault();
-    if (!(await guardMutation(store, subscription, FEATURES.QUOTES, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.QUOTES, router, { module: MODULES.QUOTES, action: ACTIONS.CREATE }))) return;
     const f = new FormData(form);
     await commercialRepo.createQuote(store.workspaceId, {
       customer_id: f.get('customerId') || null,
@@ -249,11 +251,11 @@ export function initQuotesModule(store, auth, router, subscription) {
   itemForm?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!editingQuoteId) { alert('Selecione um orçamento (Itens).'); return; }
+    if (!(await guardMutation(store, subscription, FEATURES.QUOTES, router, { module: MODULES.QUOTES, action: ACTIONS.EDIT }))) return;
     const f = new FormData(itemForm);
     const svc = serviceSelect?.selectedOptions[0];
-    await commercialRepo.addQuoteItem({
+    await commercialRepo.addQuoteItem(store.companyId, {
       quote_id: editingQuoteId,
-      workspace_id: store.workspaceId,
       service_id: f.get('serviceId') || null,
       description: f.get('description') || svc?.textContent || 'Serviço',
       quantity: parseFloat(f.get('quantity')) || 1,
@@ -297,7 +299,7 @@ export function initReceivablesModule(store, auth, router, subscription) {
     const pixId = e.target.dataset.pix;
     const nfseId = e.target.dataset.nfse;
     if (pixId) {
-      if (!(await guardMutation(store, subscription, FEATURES.PIX_CHARGES, router))) return;
+      if (!(await guardMutation(store, subscription, FEATURES.PIX_CHARGES, router, { module: MODULES.FINANCIAL, action: ACTIONS.CREATE }))) return;
       const charge = await commercialRepo.createPixCharge(pixId);
       if (pixPanel) {
         pixPanel.classList.remove('hidden');
@@ -315,7 +317,7 @@ export function initReceivablesModule(store, auth, router, subscription) {
       }
     }
     if (nfseId) {
-      if (!(await guardMutation(store, subscription, FEATURES.NFSE, router))) return;
+      if (!(await guardMutation(store, subscription, FEATURES.NFSE, router, { module: MODULES.FISCAL, action: ACTIONS.CREATE }))) return;
       const inv = await commercialRepo.requestFiscalInvoice(store.workspaceId, nfseId);
       alert(`NFS-e em processamento (${inv.status}). Acompanhe em Fiscal > Notas fiscais.`);
       router.navigate('notas-fiscais');
@@ -374,10 +376,9 @@ export function initFiscalModule(store, auth, router, subscription) {
 
   settingsForm?.addEventListener('submit', async e => {
     e.preventDefault();
-    if (!(await guardMutation(store, subscription, FEATURES.NFSE, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.NFSE, router, { module: MODULES.FISCAL, action: ACTIONS.EDIT }))) return;
     const f = new FormData(settingsForm);
-    await commercialRepo.upsertFiscalSettings({
-      workspace_id: store.workspaceId,
+    await commercialRepo.upsertFiscalSettings(store.companyId, {
       legal_name: f.get('legal_name') || null,
       trade_name: f.get('trade_name') || null,
       document: f.get('document') || null,

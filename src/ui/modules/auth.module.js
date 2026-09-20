@@ -23,8 +23,6 @@ export function initAuthModule(store, router) {
       btnLogout?.classList.add('hidden');
       btnLogin?.classList.remove('hidden');
     }
-    const usersNav = document.querySelector('.nav-item[data-view="usuarios"]');
-    if (usersNav) usersNav.style.display = (u?.role === 'admin') ? 'block' : 'none';
   }
 
   function requireAuth() {

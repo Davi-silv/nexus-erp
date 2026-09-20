@@ -3,6 +3,7 @@ import { isSupabaseEnabled } from '../../config/supabase.config.js';
 import { commercialRepo } from '../../repositories/supabase/commercial.repository.js';
 import { FEATURES } from '../../domain/features.js';
 import { guardMutation } from '../subscription-guards.js';
+import { MODULES, ACTIONS } from '../../domain/rbac.service.js';
 
 const PAGE_SIZE = 25;
 
@@ -253,10 +254,9 @@ export function initPayablesModule(store, auth, router, subscription) {
 
   supplierForm?.addEventListener('submit', async e => {
     e.preventDefault();
-    if (!(await guardMutation(store, subscription, FEATURES.SUPPLIERS, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.SUPPLIERS, router, { module: MODULES.FINANCIAL, action: ACTIONS.CREATE }))) return;
     const f = new FormData(supplierForm);
-    await commercialRepo.upsertSupplier({
-      workspace_id: store.workspaceId,
+    await commercialRepo.upsertSupplier(store.companyId, {
       name: f.get('name'),
       document: f.get('document') || null,
       email: f.get('email') || null,
@@ -271,10 +271,9 @@ export function initPayablesModule(store, auth, router, subscription) {
   form?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!auth.requireAuth()) return;
-    if (!(await guardMutation(store, subscription, FEATURES.ACCOUNTS_PAYABLE, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.ACCOUNTS_PAYABLE, router, { module: MODULES.FINANCIAL, action: ACTIONS.CREATE }))) return;
     const f = new FormData(form);
-    const created = await commercialRepo.createPayable({
-      workspace_id: store.workspaceId,
+    const created = await commercialRepo.createPayable(store.companyId, {
       supplier_id: f.get('supplierId') || null,
       category_id: f.get('categoryId') || null,
       cost_center_id: f.get('costCenterId') || null,
@@ -302,7 +301,7 @@ export function initPayablesModule(store, auth, router, subscription) {
   editForm?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!editingId) return;
-    if (!(await guardMutation(store, subscription, FEATURES.ACCOUNTS_PAYABLE, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.ACCOUNTS_PAYABLE, router, { module: MODULES.FINANCIAL, action: ACTIONS.CREATE }))) return;
     const f = new FormData(editForm);
     await commercialRepo.updatePayable(editingId, {
       supplier_id: f.get('supplierId') || null,
@@ -414,7 +413,7 @@ export function initPayablesModule(store, auth, router, subscription) {
   document.getElementById('pay-payable-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     if (!payingId) return;
-    if (!(await guardMutation(store, subscription, FEATURES.ACCOUNTS_PAYABLE, router))) return;
+    if (!(await guardMutation(store, subscription, FEATURES.ACCOUNTS_PAYABLE, router, { module: MODULES.FINANCIAL, action: ACTIONS.EDIT }))) return;
     const f = new FormData(e.target);
     try {
       await commercialRepo.markPayablePaid(

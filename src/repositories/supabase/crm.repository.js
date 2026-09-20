@@ -1,5 +1,6 @@
 import { getSupabaseClient } from '../../infrastructure/supabase.client.js';
 import { isSupabaseEnabled } from '../../config/supabase.config.js';
+import { scopedRow, stripTenantFields } from '../../domain/tenant.js';
 
 export class CrmRepository {
   #client = isSupabaseEnabled ? getSupabaseClient() : null;
@@ -20,7 +21,7 @@ export class CrmRepository {
     const { data, error } = await this.#requireClient()
       .from('crm_pipeline_stages')
       .select('*')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .order('sort_order');
     if (error) throw error;
     return data || [];
@@ -30,7 +31,7 @@ export class CrmRepository {
     const { data, error } = await this.#requireClient()
       .from('crm_opportunities')
       .select('*, customers(name, email, phone), crm_pipeline_stages(name, slug, is_closed_won, is_closed_lost, color)')
-      .eq('workspace_id', workspaceId)
+      .eq('company_id', workspaceId)
       .is('deleted_at', null)
       .order('updated_at', { ascending: false });
     if (error) throw error;
@@ -47,10 +48,10 @@ export class CrmRepository {
     return data;
   }
 
-  async createOpportunity(row) {
+  async createOpportunity(companyId, row) {
     const { data, error } = await this.#requireClient()
       .from('crm_opportunities')
-      .insert(row)
+      .insert(scopedRow(companyId, row))
       .select('*, customers(name), crm_pipeline_stages(name, slug, color)')
       .single();
     if (error) throw error;
@@ -60,7 +61,7 @@ export class CrmRepository {
   async updateOpportunity(id, patch) {
     const { data, error } = await this.#requireClient()
       .from('crm_opportunities')
-      .update(patch)
+      .update(stripTenantFields(patch))
       .eq('id', id)
       .select('*, customers(name), crm_pipeline_stages(name, slug, color)')
       .single();
@@ -95,10 +96,10 @@ export class CrmRepository {
     return data || [];
   }
 
-  async addActivity(row) {
+  async addActivity(companyId, row) {
     const { data, error } = await this.#requireClient()
       .from('crm_opportunity_activities')
-      .insert(row)
+      .insert(scopedRow(companyId, row))
       .select()
       .single();
     if (error) throw error;

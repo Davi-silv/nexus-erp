@@ -36,6 +36,7 @@ import { applyProfileUI, bindProfileTypeToggle } from './ui/profile-ui.js';
 import { initPwaInstall } from './ui/pwa-install.js';
 import { initPwaUpdate } from './ui/pwa-update.js';
 import { initMobileNav } from './ui/mobile-nav.js';
+import { guardViewAccess, applyNavVisibility } from './ui/rbac-guards.js';
 
 import { APP_CONFIG } from './config/app.config.js';
 
@@ -57,6 +58,23 @@ async function bootstrap() {
   await store.init();
   store.bindCloudAuthListener();
   router.init();
+
+  const _show = router.show.bind(router);
+  router.show = (id, push = true) => {
+    if (store.isAuthenticated() && id && id !== 'auth' && !guardViewAccess(store, id, router)) {
+      return false;
+    }
+    _show(id, push);
+    return true;
+  };
+
+  const _navigate = router.navigate.bind(router);
+  router.navigate = (id, push = true) => {
+    if (store.isAuthenticated() && id && id !== 'auth' && !guardViewAccess(store, id, router)) {
+      return;
+    }
+    _navigate(id, push);
+  };
 
   const auth = initAuthModule(store, router);
   const accounts = initAccountsModule(store, auth, router, subscriptionService);
@@ -116,6 +134,7 @@ async function bootstrap() {
     ai.renderAIHistory();
     auth.refreshAuthUI();
     applyProfileUI(store);
+    applyNavVisibility(store);
     trialBanner.refresh();
     expiredModal.refresh();
     await billing.refresh();

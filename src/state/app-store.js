@@ -23,6 +23,7 @@ export class AppStore {
     this.currentUserId = null;
     this.currentUserData = null;
     this.workspaceId = null;
+    this.companyRole = null;
     this.cloudMode = isSupabaseEnabled;
     this._sessionUser = null;
     this._saveTimer = null;
@@ -30,6 +31,11 @@ export class AppStore {
     this._savePending = false;
     this._lastSaveSilent = false;
     this.subscription = subscriptionService;
+  }
+
+  /** UUID da empresa (tenant) — mesmo valor que workspaceId (legado). */
+  get companyId() {
+    return this.workspaceId;
   }
 
   async #loadSubscription() {
@@ -86,6 +92,7 @@ export class AppStore {
     this.currentUserId = userId;
     this._sessionUser = ctx.user;
     this.workspaceId = ctx.workspaceId || sessionStore.getString(STORAGE_KEYS.WORKSPACE);
+    this.companyRole = ctx.companyRole || 'owner';
 
     if (!this.workspaceId && ctx.workspaceId) {
       this.workspaceId = ctx.workspaceId;
@@ -211,6 +218,7 @@ export class AppStore {
       this.currentUserId = r.user.id;
       this._sessionUser = r.user;
       this.workspaceId = r.workspaceId;
+      this.companyRole = r.user?.companyRole || 'owner';
       sessionStore.setString(STORAGE_KEYS.SESSION, String(r.user.id));
       if (r.workspaceId) sessionStore.setString(STORAGE_KEYS.WORKSPACE, r.workspaceId);
       await this.#maybeMigrateLocalData(r.user);
@@ -228,6 +236,7 @@ export class AppStore {
     const h = await hashPassword(pass);
     if (h !== user.passwordHash) return { ok: false, msg: 'Senha inválida' };
     this.currentUserId = user.id;
+    this.companyRole = user.role === 'admin' ? 'owner' : 'viewer';
     sessionStore.setString(STORAGE_KEYS.SESSION, String(user.id));
     await this.loadUserData();
     this.bus.emit(Events.AUTH_CHANGED, { user });
@@ -242,6 +251,7 @@ export class AppStore {
       this.currentUserId = r.user.id;
       this._sessionUser = r.user;
       this.workspaceId = r.workspaceId;
+      this.companyRole = r.user?.companyRole || 'owner';
       sessionStore.setString(STORAGE_KEYS.SESSION, String(r.user.id));
       if (r.workspaceId) sessionStore.setString(STORAGE_KEYS.WORKSPACE, r.workspaceId);
       await this.#maybeMigrateLocalData(r.user);
@@ -301,6 +311,7 @@ export class AppStore {
     this.currentUserId = null;
     this.currentUserData = null;
     this.workspaceId = null;
+    this.companyRole = null;
     this._sessionUser = null;
     this.bus.emit(Events.AUTH_CHANGED, { user: null });
   }
