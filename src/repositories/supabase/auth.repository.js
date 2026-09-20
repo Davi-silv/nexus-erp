@@ -42,7 +42,12 @@ export class SupabaseAuthRepository {
       ctx = await this.#loadUserContext(data.user.id);
     }
 
-    return { ok: true, user: ctx.user, workspaceId: ctx.workspaceId };
+    return {
+      ok: true,
+      user: ctx.user,
+      workspaceId: ctx.workspaceId,
+      companyRole: ctx.companyRole
+    };
   }
 
   async signUp(name, email, password, options = {}) {
@@ -143,15 +148,27 @@ export class SupabaseAuthRepository {
       .eq('id', userId)
       .maybeSingle();
 
-    const { data: memberships, error } = await this.#client
-      .from('company_users')
-      .select('role, company_id, companies(id, name, type, document)')
-      .eq('user_id', userId)
-      .limit(1);
-    if (error) throw error;
+    let membership = null;
+    let workspace = null;
 
-    const membership = memberships?.[0];
-    const workspace = membership?.companies;
+    const { data: membershipJson, error: memError } = await this.#client.rpc('get_my_company_membership');
+    if (!memError && membershipJson && typeof membershipJson === 'object' && membershipJson.company_id) {
+      membership = {
+        role: membershipJson.role,
+        company_id: membershipJson.company_id,
+        companies: membershipJson.company || null
+      };
+      workspace = membershipJson.company || null;
+    } else {
+      const { data: memberships, error } = await this.#client
+        .from('company_users')
+        .select('role, company_id, companies(id, name, type, document)')
+        .eq('user_id', userId)
+        .limit(1);
+      if (error) throw error;
+      membership = memberships?.[0] || null;
+      workspace = membership?.companies || null;
+    }
     const { data: { user: authUser } } = await this.#client.auth.getUser();
 
     return {

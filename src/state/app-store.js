@@ -218,15 +218,19 @@ export class AppStore {
       this.currentUserId = r.user.id;
       this._sessionUser = r.user;
       this.workspaceId = r.workspaceId;
-      this.companyRole = r.user?.companyRole || 'owner';
+      this.companyRole = r.user?.companyRole || r.companyRole || 'owner';
       sessionStore.setString(STORAGE_KEYS.SESSION, String(r.user.id));
       if (r.workspaceId) sessionStore.setString(STORAGE_KEYS.WORKSPACE, r.workspaceId);
       await this.#maybeMigrateLocalData(r.user);
       await this.loadUserData();
       await this.#loadSubscription();
-      this.users = r.workspaceId
-        ? await supabaseAuthRepo.listWorkspaceMembers(r.workspaceId)
-        : [r.user];
+      try {
+        this.users = r.workspaceId
+          ? await supabaseAuthRepo.listWorkspaceMembers(r.workspaceId)
+          : [r.user];
+      } catch {
+        this.users = [r.user];
+      }
       this.bus.emit(Events.AUTH_CHANGED, { user: r.user });
       return { ok: true };
     }

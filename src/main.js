@@ -57,11 +57,15 @@ async function bootstrap() {
 
   await store.init();
   store.bindCloudAuthListener();
-  router.init();
 
   const _show = router.show.bind(router);
+  router._showRaw = _show;
   router.show = (id, push = true) => {
-    if (store.isAuthenticated() && id && id !== 'auth' && !guardViewAccess(store, id, router)) {
+    if (id === 'auth' || !id) {
+      _show(id || 'auth', push);
+      return true;
+    }
+    if (store.isAuthenticated() && !guardViewAccess(store, id, router)) {
       return false;
     }
     _show(id, push);
@@ -75,6 +79,8 @@ async function bootstrap() {
     }
     _navigate(id, push);
   };
+
+  router.init();
 
   const auth = initAuthModule(store, router);
   const accounts = initAccountsModule(store, auth, router, subscriptionService);

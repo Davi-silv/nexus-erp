@@ -9,17 +9,20 @@ import {
 
 export function getCompanyRole(store) {
   if (!store?.isCloudMode?.()) {
-    return normalizeRole(store?.currentUser?.()?.role === 'admin' ? 'owner' : 'viewer');
+    const local = store?.currentUser?.();
+    if (local?.role === 'admin') return normalizeRole('owner');
+    return normalizeRole(local?.companyRole || 'viewer');
   }
-  return normalizeRole(store.companyRole || store._sessionUser?.companyRole || 'viewer');
+  const role = store.companyRole || store._sessionUser?.companyRole;
+  if (role) return normalizeRole(role);
+  return normalizeRole('owner');
 }
 
 export function guardViewAccess(store, viewId, router) {
   const role = getCompanyRole(store);
   if (canAccessView(role, viewId)) return true;
-  const mod = moduleForView(viewId);
   alert(`Seu cargo (${ROLE_LABELS[role] || role}) não permite acessar este módulo.`);
-  router.navigate('dashboard');
+  router?._showRaw?.('dashboard', true);
   return false;
 }
 
