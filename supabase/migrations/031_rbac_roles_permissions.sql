@@ -144,46 +144,46 @@ GRANT EXECUTE ON FUNCTION public.get_my_permissions(UUID) TO authenticated;
 -- ---------------------------------------------------------------------------
 -- Escrita financeira: papel + assinatura + permissão RBAC
 -- ---------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.can_write_financial(p_company_id UUID)
+CREATE OR REPLACE FUNCTION public.can_write_financial(p_workspace_id UUID)
 RETURNS BOOLEAN
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT public.is_company_member(p_company_id)
-    AND public.can_write_financial_data(p_company_id)
+  SELECT public.is_company_member(p_workspace_id)
+    AND public.can_write_financial_data(p_workspace_id)
     AND public.rbac_allowed(
-      public.get_company_role(p_company_id),
+      public.get_company_role(p_workspace_id),
       'financial',
       'edit'
     );
 $$;
 
-CREATE OR REPLACE FUNCTION public.can_write_fiscal(p_company_id UUID)
+CREATE OR REPLACE FUNCTION public.can_write_fiscal(p_workspace_id UUID)
 RETURNS BOOLEAN
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT public.is_company_member(p_company_id)
-    AND public.can_write_financial_data(p_company_id)
+  SELECT public.is_company_member(p_workspace_id)
+    AND public.can_write_financial_data(p_workspace_id)
     AND public.rbac_allowed(
-      public.get_company_role(p_company_id),
+      public.get_company_role(p_workspace_id),
       'fiscal',
       'edit'
     );
 $$;
 
-CREATE OR REPLACE FUNCTION public.can_read_workspace(p_company_id UUID)
+CREATE OR REPLACE FUNCTION public.can_read_workspace(p_workspace_id UUID)
 RETURNS BOOLEAN
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT public.is_company_member(p_company_id);
+  SELECT public.is_company_member(p_workspace_id);
 $$;
 
 -- ---------------------------------------------------------------------------

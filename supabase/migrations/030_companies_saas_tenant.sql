@@ -79,15 +79,16 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   );
 $$;
 
-CREATE OR REPLACE FUNCTION public.can_write_financial(p_company_id UUID)
+-- Mantém p_workspace_id no signature (mesmo UUID = company_id) para CREATE OR REPLACE em PG
+CREATE OR REPLACE FUNCTION public.can_write_financial(p_workspace_id UUID)
 RETURNS BOOLEAN
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT public.has_company_role(
-           p_company_id,
+           p_workspace_id,
            ARRAY['owner', 'admin', 'financial']::TEXT[]
          )
-     AND public.is_company_member(p_company_id)
-     AND public.can_write_financial_data(p_company_id);
+     AND public.is_company_member(p_workspace_id)
+     AND public.can_write_financial_data(p_workspace_id);
 $$;
 
 CREATE OR REPLACE FUNCTION public.can_read_company(p_company_id UUID)
@@ -102,13 +103,13 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT public.has_company_role(p_company_id, ARRAY['owner', 'admin']::TEXT[]);
 $$;
 
-CREATE OR REPLACE FUNCTION public.can_write_fiscal(p_company_id UUID)
+CREATE OR REPLACE FUNCTION public.can_write_fiscal(p_workspace_id UUID)
 RETURNS BOOLEAN
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT public.has_company_role(
-    p_company_id,
+    p_workspace_id,
     ARRAY['owner', 'admin', 'financial', 'accountant']::TEXT[]
-  ) AND public.can_write_financial_data(p_company_id);
+  ) AND public.can_write_financial_data(p_workspace_id);
 $$;
 
 CREATE OR REPLACE FUNCTION public.is_workspace_member(p_workspace_id UUID)
@@ -171,9 +172,14 @@ DO $$
 DECLARE r RECORD;
 BEGIN
   FOR r IN
-    SELECT table_name FROM information_schema.columns
-    WHERE table_schema = 'public' AND column_name = 'company_id'
-      AND table_name NOT IN ('company_users')
+    SELECT c.table_name
+    FROM information_schema.columns c
+    JOIN information_schema.tables t
+      ON t.table_schema = c.table_schema AND t.table_name = c.table_name
+    WHERE c.table_schema = 'public'
+      AND c.column_name = 'company_id'
+      AND t.table_type = 'BASE TABLE'
+      AND c.table_name NOT IN ('company_users')
   LOOP
     EXECUTE format('DROP TRIGGER IF EXISTS trg_prevent_company_id_change ON public.%I', r.table_name);
     EXECUTE format(
@@ -1297,14 +1303,17 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS quote_items_set_line_total ON public.quote_items;
 CREATE TRIGGER quote_items_set_line_total
   BEFORE INSERT OR UPDATE ON public.quote_items
   FOR EACH ROW EXECUTE FUNCTION public._quote_items_set_line_total();
 
+DROP TRIGGER IF EXISTS quote_items_recalc_after_change ON public.quote_items;
 CREATE TRIGGER quote_items_recalc_after_change
   AFTER INSERT OR UPDATE ON public.quote_items
   FOR EACH ROW EXECUTE FUNCTION public._quote_items_after_change_recalc();
 
+DROP TRIGGER IF EXISTS quote_items_recalc_after_delete ON public.quote_items;
 CREATE TRIGGER quote_items_recalc_after_delete
   AFTER DELETE ON public.quote_items
   FOR EACH ROW EXECUTE FUNCTION public._quote_items_after_delete_recalc();
